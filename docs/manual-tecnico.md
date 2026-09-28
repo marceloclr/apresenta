@@ -178,7 +178,7 @@ Ordem no `index.html` (todos com `defer`, que preserva a ordem de execução):
 
 **`js/interface/biblioteca.js`** (`O.ui.biblioteca`) — aba Biblioteca. **Navegador:** loja `biblioteca`, chave = id → `{ id, nome, guardadoEm, projeto, resumo: { titulo, tema, slides, bytes } }`; guardar cópia (nome validado em tempo real), abrir por `O.ui.apresentar.oferecerProjeto` (confirmação de D35), atualizar com o trabalho atual e remover (dois toques), exportar como `.oratoria.json`, filtro por nome. **Pasta:** File System Access (Chrome, Edge e derivados); o `FileSystemDirectoryHandle` fica na loja `pastas` (`'atual'`) e a permissão de escrita é pedida a cada sessão, num gesto do usuário (`queryPermission`/`requestPermission`). "Gravar na pasta" escreve `<titulo>.html` e `<titulo>.oratoria.json` (sem data, substituindo a versão anterior) e regenera `indice.html` — página estática, sem scripts, com CSP própria, que lista os `.html` da pasta pelo `<title>` de cada um, com data e tamanho, nos temas claro e escuro do sistema. A lista da aba mostra os `.oratoria.json` da pasta, com "Abrir". Sem a API (Firefox), os dois arquivos vão para os downloads. Publicação no GitHub: etapa 10 (D34). API: `iniciar()`.
 
-**`js/interface/painel-composicao.js`** (`O.ui.composicao`) — aba Composição: abrir arquivos ou pasta, novo projeto (confirmação em dois toques), exemplos (D22, lidos sob demanda do embutível) e blocos prontos. Os layouts entram como novo slide após o slide sob o cursor (`MODELOS_LAYOUT`); os blocos de conteúdo, no cursor (`BLOCOS`), com modelos que citam o primeiro arquivo adequado do acervo. API: `iniciar`, `novoProjeto`, `abrirExemplo(id)`.
+**`js/interface/painel-composicao.js`** (`O.ui.composicao`) — aba Composição: abrir arquivos ou pasta, novo projeto (confirmação em dois toques), exemplos (D22, lidos sob demanda do embutível; na edição portátil, um botão indisponível cuja dica explica onde encontrá-los) e blocos prontos. Os layouts entram como novo slide após o slide sob o cursor (`MODELOS_LAYOUT`); os blocos de conteúdo, no cursor (`BLOCOS`), com modelos que citam o primeiro arquivo adequado do acervo. API: `iniciar`, `novoProjeto`, `abrirExemplo(id)`.
 
 **`js/interface/app.js`** — orquestração: identidade (nome e versão), tema da interface, validação do título do projeto, `O.ui.anunciar(texto)` (região viva), `O.ui.notificar(texto, { gravidade })` (avisos passageiros no canto da tela), `O.ui.doisToques(botao, pergunta, acao, { exigir })` (confirmação sem janela modal), indicadores da barra (§5.3), guarda automática e convite "Retomar" (D29), preferências salvas, painel "Condições do ambiente" (inclui "Instalado como aplicativo" e "Disponível sem internet"), registro do service worker com o aviso "Nova versão disponível" (§12.1) e auditorias em modo de desenvolvimento. Inicializa os demais módulos da interface.
 
@@ -352,6 +352,8 @@ Atributos: `data-dica` (texto), `data-dica-titulo`, `data-dica-formula` (bloco e
 | `tools/vendor.mjs` | Copia bibliotecas de `node_modules/` para `vendor/`; compõe IIFEs quando o pacote não publica build clássico (markdown-it-attrs 5.x; subconjunto do highlight.js); copia fontes; grava `VERSOES.md` e licenças |
 | `tools/gerar-embutiveis.mjs` | Gera `embutiveis/*` e `sw-recursos.js` |
 | `tools/verificar.mjs` | Validações (tabela abaixo) |
+| `tools/empacotar.mjs` | Edições portáteis e manual em HTML (§12.3) |
+| `tools/lib/markdown-html.mjs` | Markdown → HTML autocontido do manual operacional |
 | `tools/icones.mjs` | Rasteriza `assets/icones/icone.svg` nos PNG 192, 512 e 512 *maskable* com o Edge ou Chrome instalado em modo headless (D39; `NAVEGADOR=<executável>` para indicar outro); resultado versionado |
 | `tools/lib/comum.mjs` | Utilitários compartilhados (hash, listagem, `literalSeguro`, referências do HTML) |
 
@@ -397,7 +399,19 @@ Uma verificação reprovada impede a publicação: o site continua na última ve
 
 ### 12.3 Edições portáteis e *release*
 
-*(Etapa 9.)* `tools/empacotar.mjs` gerará `dist/oratoria-pasta.zip` e `dist/oratoria-portatil.html` (com o manual operacional também em HTML) e `release.yml` (tag `v*`).
+`node tools/empacotar.mjs` (exige `npm ci` e embutíveis em dia) gera em `dist/` (fora do Git):
+
+| Arquivo | Conteúdo |
+|---|---|
+| `oratoria-pasta.zip` | A aplicação numa pasta `apresenta/`, *deflate* com `zlib` nativo e nomes UTF-8, sem `tools/`, `.github/`, `node_modules/`, `dist/`, `package*.json`, `docs/planos/` e arquivos ocultos; inclui `docs/manual-operacional.html` |
+| `oratoria-portatil.html` | Arquivo único derivado do `index.html` (D41): folhas inline (exceto `fontes.css`); no `<head>`, `namespace.js`, o embutível de fontes e um gerador de `@font-face` a partir dele (D13); ao fim do `<body>`, os demais scripts na ordem do índice (o DOM já está analisado, como com `defer`), com `EDICAO = 'portatil'`, o embutível do Chart.js e o manual (`O.embutiveis.manual`) logo após `config.js`. Sem exemplos, manifest e service worker; ícone SVG em data URL; selo "Edição portátil · vX.Y.Z" ao lado da versão |
+| `manual-operacional.html` | Manual operacional autocontido (`tools/lib/markdown-html.mjs`: markdown-it, fontes Plex em data URL, âncoras e sumário com links, claro/escuro, CSP sem scripts) |
+
+Scripts inline passam por `blindarScript`: `<!--`, `<script` e `</script` dentro de strings, templates e expressões regulares viram `<…` (tokenização pelo acorn); fora de literais, é erro. Todas as substituições usam funções (o código contém `$&`). Ao final, cada script inline passa por `node --check` e as tags são conferidas.
+
+No portátil, o Guia oferece **Abrir o manual** (Blob em nova aba); a aba Composição mostra os exemplos como indisponíveis; "Modo de abertura" informa a edição.
+
+`.github/workflows/release.yml`: numa tag `v*` criada pelo autor (D42), `npm ci`, verificação, empacotamento e anexação dos três arquivos à release da tag (criada se ainda não existir).
 
 ## 13. Decisões de projeto
 
@@ -436,6 +450,8 @@ Acréscimos da etapa 7 (exportações), também em `CLAUDE.md` §5:
 - **D38** Suporte a Chrome, Edge, Firefox e derivados; Safari fora do escopo.
 - **D39** Ícones PNG rasterizados pelo navegador instalado (`tools/icones.mjs`), sem dependência de imagem; versionados.
 - **D40** O service worker guarda só os arquivos da aplicação; nada do trabalho do usuário.
+- **D41** O portátil deriva do mesmo `index.html` pelo empacotador; nada editado à mão.
+- **D42** Release só a partir de tag criada pelo autor; nunca criar tags ou releases sem pedido.
 
 ## 14. Limitações conhecidas
 

@@ -10,6 +10,7 @@
   const GU = (O.ui.guia = {});
   const U = O.util;
   const E = O.estado;
+  const C = O.config;
 
   const SECOES = [
     {
@@ -137,7 +138,20 @@
         U.el('tbody', null, ...ATALHOS.map(([tecla, efeito]) => U.el('tr', null, U.el('th', { scope: 'row' }, U.el('kbd', null, tecla)), U.el('td', null, efeito))))));
     const manual = U.el('section', { class: 'cartao', 'data-cor': 'guia' },
       U.el('h3', null, 'Manual de uso'),
-      U.el('p', { class: 'cartao-nota' }, 'O percurso completo — do texto à apresentação, a escolha do tema conforme o ambiente e a solução de problemas — está no manual operacional, em docs/manual-operacional.md, na pasta da aplicação.'));
+      U.el('p', { class: 'cartao-nota' }, C.EDICAO === 'portatil'
+        ? 'O percurso completo — do texto à apresentação, a escolha do tema conforme o ambiente e a solução de problemas — está no manual operacional, que acompanha este arquivo.'
+        : 'O percurso completo — do texto à apresentação, a escolha do tema conforme o ambiente e a solução de problemas — está no manual operacional, na pasta docs/ da aplicação (manual-operacional.html na pasta distribuída; manual-operacional.md no repositório).'));
+    if (typeof O.embutiveis.manual === 'string') {
+      // Edição portátil: o manual vem embutido e abre numa nova aba (documento autocontido, sem scripts).
+      const abrir = U.el('button', { type: 'button', class: 'botao',
+        'data-dica': 'Abre o manual operacional numa nova aba. Pode ser salvo ou impresso pelo navegador.' }, 'Abrir o manual');
+      abrir.addEventListener('click', () => {
+        const url = URL.createObjectURL(new Blob([O.embutiveis.manual], { type: 'text/html' }));
+        window.open(url, '_blank', 'noopener');
+        setTimeout(() => URL.revokeObjectURL(url), 60000);
+      });
+      manual.append(abrir);
+    }
     alvo.replaceChildren(...SECOES.map(secao), atalhos, manual);
   }
 

@@ -15,6 +15,7 @@
   const U = O.util;
   const E = O.estado;
   const R = O.rotulos;
+  const C = O.config;
 
   // ═══════════════════════════ Modelos ═══════════════════════════
 
@@ -157,6 +158,14 @@
     const alvo = U.$('#lista-exemplos');
     if (!alvo || alvo.dataset.montado) return;
     alvo.dataset.montado = '1';
+    if (C.EDICAO === 'portatil') {
+      // A edição portátil não traz os exemplos (arquivo mais leve); a dica explica onde encontrá-los.
+      const botao = U.el('button', { type: 'button', class: 'botao botao-exemplo', 'data-dica': 'Exemplos de apresentação, um por tema.' },
+        U.el('span', { class: 'exemplo-tema' }, 'Exemplos'), U.el('span', { class: 'exemplo-titulo' }, 'Indisponíveis nesta edição'));
+      O.ui.dicas.indisponivel(botao, 'A edição portátil não traz os exemplos, para manter o arquivo leve. Eles estão na pasta completa (oratoria-pasta.zip) e na versão publicada na internet.');
+      alvo.replaceChildren(botao);
+      return;
+    }
     try {
       const lista = await carregarExemplos();
       alvo.replaceChildren(...lista.map((ex) => {

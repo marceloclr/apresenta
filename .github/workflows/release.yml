@@ -1,0 +1,30 @@
+# Release a partir de uma tag v* criada pelo autor (D42): gera as edições portáteis e as anexa.
+# Nenhuma tag ou release é criada automaticamente.
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: npm
+      - run: npm ci
+      - run: node tools/verificar.mjs
+      - run: node tools/empacotar.mjs
+      - name: Anexar à release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          gh release view "$TAG" >/dev/null 2>&1 || gh release create "$TAG" --title "Apresenta $TAG" --notes "Edições da versão $TAG: pasta completa (zip), arquivo portátil único e manual operacional."
+          gh release upload "$TAG" dist/oratoria-pasta.zip dist/oratoria-portatil.html dist/manual-operacional.html --clobber

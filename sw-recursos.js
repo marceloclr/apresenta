@@ -1,7 +1,7 @@
 // ARQUIVO GERADO por tools/gerar-embutiveis.mjs — NÃO EDITAR À MÃO.
 // Origem: index.html, js/nucleo/config.js
 // Importado por sw.js via importScripts(). A assinatura muda sempre que qualquer recurso muda.
-self.ORATORIA_CACHE = "oratoria-0.1.0-7e8c6ca91fc9";
+self.ORATORIA_CACHE = "oratoria-0.1.0-3170955d4993";
 self.ORATORIA_RECURSOS = [
   "./",
   "index.html",

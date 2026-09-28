@@ -1,7 +1,7 @@
 # Apresenta — Manual operacional
 
 > Guia de uso para quem compõe e apresenta. Não exige conhecimento técnico.
-> Versão do documento: **0.1.0 · etapa 6**. Itens marcados *(em preparação)* ainda não estão disponíveis nesta versão.
+> Versão do documento: **0.1.0 · etapa 9**. Itens marcados *(em preparação)* ainda não estão disponíveis nesta versão.
 
 ## Sumário
 
@@ -33,8 +33,10 @@ A apresentação final é **um único arquivo `.html`**, que abre em qualquer na
 |---|---|---|
 | **Pasta no computador ou pendrive** | Abra a pasta e dê duplo clique em `index.html` | Funciona sem internet. Use Chrome, Edge, Firefox ou navegadores derivados deles (o Safari não é suportado) |
 | **Arquivo zip recebido** | **Extraia o zip primeiro** (botão direito → "Extrair tudo"); depois abra `index.html` | Abrir de dentro do zip, sem extrair, **não funciona** |
-| **Endereço na internet** *(em preparação)* | Acesse o endereço publicado | Pode ser instalado como aplicativo |
-| **Arquivo portátil** *(em preparação)* | Dê duplo clique em `oratoria-portatil.html` | Um só arquivo, ideal para envio por e-mail |
+| **Endereço na internet** | Acesse https://marceloclr.github.io/apresenta/ | No Chrome e no Edge, pode ser instalado como aplicativo (ícone de instalação na barra de endereço) e passa a abrir sem internet depois da primeira visita |
+| **Arquivo portátil** | Dê duplo clique em `oratoria-portatil.html` | Um só arquivo (cerca de 1,6 MB), ideal para envio por e-mail. Não traz os exemplos; o manual abre pelo botão **Abrir o manual**, na aba Guia |
+
+As edições para distribuição — `oratoria-pasta.zip` (pasta completa, com este manual em `docs/manual-operacional.html`), `oratoria-portatil.html` e `manual-operacional.html` — ficam na página de versões (*releases*) do projeto no GitHub.
 
 A pasta pode ser copiada para qualquer lugar ou pendrive sem prejuízo.
 
