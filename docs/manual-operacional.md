@@ -13,7 +13,7 @@
 6. Escolhendo o tema conforme o ambiente
 7. Apresentando
 8. Exportando
-9. Biblioteca *(em preparação)*
+9. Biblioteca
 10. Guarda automática e transporte do trabalho
 11. Conferência
 12. Solução de problemas
@@ -431,9 +431,24 @@ Ao terminar, um aviso mostra o tamanho real do arquivo e a estimativa do indicad
 
 O arquivo HTML exportado também gera PDF: botão **PDF** na barra que surge ao mover o mouse, ou tecla **D**. **Ctrl+P** nele imprime um slide por página.
 
-## 9. Biblioteca *(em preparação)*
+## 9. Biblioteca
 
-Apresentações guardadas no navegador, numa pasta do computador ou pendrive, ou publicadas no GitHub.
+A aba **Biblioteca** guarda apresentações prontas para reabrir mais tarde.
+
+**Neste navegador.** Dê um nome (ou deixe em branco para usar o título) e clique em **Guardar cópia**. O trabalho continua aberto no editor. Na lista:
+
+| Botão | Efeito |
+|---|---|
+| **Abrir** | Leva a apresentação ao editor. Se houver trabalho aberto, pede confirmação, e o trabalho substituído fica guardado para retomada |
+| **Atualizar** | Troca o conteúdo guardado pelo trabalho atual (segundo toque para confirmar) |
+| **Exportar** | Gera o `.oratoria.json` desta apresentação |
+| **Remover** | Apaga da Biblioteca (segundo toque para confirmar; não pode ser desfeito) |
+
+A Biblioteca do navegador vale só neste computador e neste navegador. Em arquivo local, também depende da pasta de onde o Apresenta foi aberto (ver §10). Para levar a outro lugar, use **Exportar**.
+
+**Pasta do computador** (Chrome e Edge). **Escolher pasta…** indica uma pasta no disco, num pendrive ou numa pasta sincronizada. **Gravar na pasta** grava nela a apresentação pronta (`.html`) e o projeto (`.oratoria.json`) com o nome do título, substituindo a versão anterior, e atualiza o arquivo `indice.html`, uma página com a lista de todas as apresentações da pasta, para abrir com duplo clique. O navegador pede permissão de acesso à pasta a cada sessão (**Autorizar acesso**). No Firefox, que não permite gravar direto numa pasta, **Gravar na pasta** envia os dois arquivos para os downloads.
+
+**Publicação no GitHub:** *(em preparação)*.
 
 ## 10. Guarda automática e transporte do trabalho
 

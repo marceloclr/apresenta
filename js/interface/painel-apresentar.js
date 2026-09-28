@@ -112,7 +112,15 @@
       O.ui.notificar(`"${arquivo.name}" não pôde ser aberto: ${e.message}.`, { gravidade: 'erro' });
       return;
     }
-    const titulo = lido.projeto.titulo || (O.conteudo.extrairFrontMatter(lido.projeto.markdown).meta || {}).titulo || arquivo.name;
+    AP.oferecerProjeto(lido, arquivo.name);
+  };
+
+  /**
+   * Abre um projeto já validado ({ projeto, avisos, origem }), pedindo confirmação na faixa se
+   * houver trabalho em andamento (D35). Usado pela abertura de arquivos e pela Biblioteca.
+   */
+  AP.oferecerProjeto = function (lido, nomeAlternativo) {
+    const titulo = lido.projeto.titulo || (O.conteudo.extrairFrontMatter(lido.projeto.markdown).meta || {}).titulo || nomeAlternativo || 'sem título';
     const temTrabalho = !!(E.obter('projeto.markdown') || '').trim();
     const carregar = async () => {
       if (temTrabalho) {
@@ -127,7 +135,8 @@
     if (!temTrabalho) { carregar(); return; }
 
     const faixa = U.$('#faixa-abrir-projeto');
-    const origem = lido.origem.exportadoEm ? ` (exportado em ${U.formatarDataHora(lido.origem.exportadoEm)})` : '';
+    const origem = lido.origem.descricao ? ` (${lido.origem.descricao})`
+      : lido.origem.exportadoEm ? ` (exportado em ${U.formatarDataHora(lido.origem.exportadoEm)})` : '';
     U.$('[data-texto]', faixa).textContent = `Abrir o projeto "${titulo}"${origem} no lugar do trabalho atual? O trabalho atual fica guardado neste navegador e será oferecido para retomada na próxima abertura.`;
     faixa.hidden = false;
     const abrir = U.$('#botao-confirmar-projeto');

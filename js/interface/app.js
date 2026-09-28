@@ -351,6 +351,7 @@
     O.ui.guia.iniciar();
     O.ui.composicao.iniciar();
     O.ui.apresentar.iniciar();
+    O.ui.biblioteca.iniciar();
     iniciarIndicadores();
 
     let ambienteConferido = false;

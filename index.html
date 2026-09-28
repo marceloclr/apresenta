@@ -86,6 +86,7 @@
   <script defer src="js/interface/conferencia.js"></script>
   <script defer src="js/interface/painel-guia.js"></script>
   <script defer src="js/interface/painel-apresentar.js"></script>
+  <script defer src="js/interface/biblioteca.js"></script>
   <script defer src="js/interface/painel-composicao.js"></script>
   <script defer src="js/interface/app.js"></script>
 </head>
@@ -446,8 +447,43 @@
               <p>Apresentações guardadas e publicadas.</p>
             </header>
             <div class="cartao" data-cor="biblioteca">
-              <h3>Em preparação</h3>
-              <p class="cartao-nota">Navegador, pasta local e publicação no GitHub.</p>
+              <h3>Neste navegador</h3>
+              <label class="campo">
+                <span class="campo-rotulo">Nome da cópia</span>
+                <input type="text" class="entrada" id="campo-nome-biblioteca" style="--largura: 36ch" maxlength="80" autocomplete="off"
+                       data-dica="Nome com que a cópia aparece na lista. Vazio: usa o título da apresentação. Até 80 caracteres; / \ : * ? &quot; &lt; &gt; | são removidos.">
+              </label>
+              <div class="grupo-botoes">
+                <button type="button" class="botao botao-primario" id="botao-guardar-biblioteca"
+                        data-dica="Guarda uma cópia do trabalho atual (texto, acervo e ajustes) na Biblioteca deste navegador. O trabalho continua aberto no editor.">Guardar cópia</button>
+              </div>
+              <label class="campo">
+                <span class="campo-rotulo">Procurar</span>
+                <input type="search" class="entrada" id="campo-filtro-biblioteca" style="--largura: 28ch" autocomplete="off"
+                       placeholder="Parte do nome"
+                       data-dica="Mostra só as apresentações cujo nome contém o texto digitado.">
+              </label>
+              <p class="cartao-nota" id="biblioteca-resumo" aria-live="polite"></p>
+              <p class="cartao-nota">A Biblioteca fica neste navegador e neste computador; em arquivo local, também depende da pasta de onde a aplicação foi aberta. Para transportar, use Exportar.</p>
+            </div>
+            <ul class="lista-acervo" id="lista-biblioteca" aria-label="Apresentações guardadas neste navegador"></ul>
+            <div class="cartao" data-cor="biblioteca">
+              <h3>Pasta do computador</h3>
+              <p class="cartao-nota" id="pasta-atual" aria-live="polite">Nenhuma pasta escolhida.</p>
+              <div class="grupo-botoes">
+                <button type="button" class="botao" id="botao-escolher-pasta"
+                        data-dica="Escolhe a pasta (no disco, pendrive ou pasta sincronizada) onde as apresentações serão gravadas. O navegador pede permissão.">Escolher pasta…</button>
+                <button type="button" class="botao" id="botao-autorizar-pasta" hidden
+                        data-dica="O navegador pede de novo a permissão de acesso à pasta a cada sessão.">Autorizar acesso</button>
+                <button type="button" class="botao botao-primario" id="botao-gravar-pasta"
+                        data-dica="Grava na pasta a apresentação (.html) e o projeto (.oratoria.json) com o nome do título, substituindo versões anteriores de mesmo nome, e atualiza o indice.html com a lista da pasta.">Gravar na pasta</button>
+              </div>
+              <p class="cartao-nota" id="estado-pasta" aria-live="polite"></p>
+              <ul class="lista-pasta" id="lista-pasta" aria-label="Projetos na pasta"></ul>
+            </div>
+            <div class="cartao" data-cor="biblioteca">
+              <h3>Publicação</h3>
+              <p class="cartao-nota">A publicação no GitHub chega com os serviços externos, numa próxima versão.</p>
             </div>
           </section>
 
