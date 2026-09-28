@@ -76,6 +76,8 @@
   <script defer src="js/interface/acervo.js"></script>
   <script defer src="js/interface/editor-tabelas.js"></script>
   <script defer src="js/interface/painel-tema.js"></script>
+  <script defer src="js/interface/conferencia.js"></script>
+  <script defer src="js/interface/painel-guia.js"></script>
   <script defer src="js/interface/painel-composicao.js"></script>
   <script defer src="js/interface/app.js"></script>
 </head>
@@ -348,6 +350,19 @@
               <h2>Conferência</h2>
               <p>O que merece atenção antes de apresentar ou exportar.</p>
             </header>
+            <div class="cartao" data-cor="conferencia">
+              <h3>Advertências</h3>
+              <p class="cartao-nota" id="resumo-advertencias" aria-live="polite">Sem slides para conferir.</p>
+              <ul class="lista-advertencias" id="lista-advertencias"></ul>
+            </div>
+            <details class="cartao" data-cor="conferencia">
+              <summary><h3 id="titulo-contraste">Contraste do tema</h3></summary>
+              <p class="cartao-nota">Razões de contraste WCAG calculadas a partir das cores do tema e dos ajustes. Mínimo AA: 4,5:1 para texto corrente e 3:1 para texto grande.</p>
+              <table class="tabela-simples" id="tabela-contraste">
+                <thead><tr><th scope="col">Par de cores</th><th scope="col">Razão</th><th scope="col">Nível</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </details>
             <div class="cartao" data-cor="conferencia" id="cartao-ambiente">
               <h3>Condições do ambiente
                 <button type="button" class="botao botao-discreto" id="botao-reconferir-ambiente"
@@ -394,10 +409,7 @@
               <h2>Guia</h2>
               <p>Referência da sintaxe estendida.</p>
             </header>
-            <div class="cartao" data-cor="guia">
-              <h3>Em preparação</h3>
-              <p class="cartao-nota">Front-matter, diretivas, contêineres, tabelas, gráficos e atalhos.</p>
-            </div>
+            <div class="guia" id="conteudo-guia"></div>
           </section>
         </div>
       </aside>

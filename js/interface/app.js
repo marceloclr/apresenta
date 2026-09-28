@@ -364,6 +364,8 @@
     O.ui.acervo.iniciar();
     O.ui.tabelas.iniciar();
     O.ui.tema.iniciar();
+    O.ui.conferencia.iniciar();
+    O.ui.guia.iniciar();
     O.ui.composicao.iniciar();
     iniciarIndicadores();
     iniciarApresentacao();

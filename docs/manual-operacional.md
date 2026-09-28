@@ -65,7 +65,7 @@ O botão com sol ou lua alterna a **interface** entre clara e escura. Isso não 
 | Conferência | Advertências e condições do ambiente |
 | Apresentar e exportar | Tela cheia, modo apresentador, arquivos finais |
 | Biblioteca | Apresentações guardadas e publicadas |
-| Guia | Referência rápida da sintaxe |
+| Guia | Referência rápida da sintaxe, com exemplos para copiar ou inserir no cursor, e atalhos de apresentação |
 
 Navegue entre as abas com as setas **↑ ↓** e ative com **Enter**.
 
@@ -435,7 +435,17 @@ O cartão **Condições do ambiente** informa se tudo está em ordem neste compu
 | Recursos de exportação | Se a pasta `embutiveis/` pode ser lida |
 | Conexão com a internet | Necessária só para recursos opcionais |
 
-Advertências sobre o conteúdo (imagens sem descrição, contraste, tabelas divididas, arquivos pesados) *(em preparação)*.
+**Advertências** — revistas automaticamente um segundo depois de cada alteração. A aba mostra, ao lado do nome, quantas advertências e impedimentos há.
+
+| Gravidade | Exemplos | O que fazer |
+|---|---|---|
+| **Impedimento** | Cabeçalho ilegível; bloco de tabela ou gráfico com erro | Corrija no texto: o slide não sai como esperado |
+| **Advertência** | Imagem sem descrição ou não encontrada no acervo; slide sem título; contraste insuficiente do tema; imagem pesada; instrução desconhecida | Recomenda-se corrigir antes de apresentar |
+| **Observação** | Tabela dividida em vários slides ou com a letra reduzida; arquivo do acervo não citado | Apenas informa |
+
+Cada item indica o slide e a linha. **Ir ao texto** leva o cursor até lá; **Ver no acervo** e **Abrir Tema** levam à aba onde o ajuste é feito.
+
+**Contraste do tema** — tabela com a legibilidade de cada par de cores do tema escolhido (texto sobre fundo, links, cabeçalho de tabela, eixos de gráfico), já com a sua cor de acento. O mínimo recomendado (nível AA) é 4,5:1 para texto comum e 3:1 para títulos.
 
 ## 12. Solução de problemas
 
