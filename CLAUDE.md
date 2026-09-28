@@ -14,6 +14,9 @@ em `docs/especificacao.md` (cópia do prompt original) e as decisões aprovadas 
 6. **Novo `.js`** exige, na mesma alteração, a linha `<script defer>` no `index.html`, na posição correta (§3), e sua descrição no inventário do manual técnico.
 7. **Manuais sempre atualizados:** toda alteração de comportamento ou estrutura atualiza, na mesma entrega, `docs/manual-tecnico.md` (arquitetura, módulos, APIs, procedimentos) e `docs/manual-operacional.md` (uso, sintaxe, telas). O `verificar.mjs` reprova módulo não descrito no manual técnico.
 
+8. **Situação e próximos passos:** etapas 1 a 7 concluídas. Planos aprovados e ainda não executados ficam em `docs/planos/` — leia-os antes de começar. Próximo: `docs/planos/etapas-8-9.md` (aprovado, executar direto).
+9. **Idioma e fluxo com o autor:** português do Brasil; apresentar plano e aguardar aprovação antes de cada etapa; um commit verificado por passo, com push; relatar ao final de cada etapa.
+
 ## 2. Restrições impostas pelo `file://` (inegociáveis)
 
 A aplicação abre por duplo clique no `index.html`, sem servidor e sem build.
