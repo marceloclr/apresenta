@@ -384,9 +384,20 @@ Ciclo de vida: a instalação baixa a lista inteira com `cache: 'reload'` e cham
 
 Registro: somente em `https:` e fora da edição portátil. Para testes locais, `index.html?dev&sw` em `localhost` ou `127.0.0.1` também registra (contexto seguro e modo de desenvolvimento).
 
-### 12.2 Edições e publicação
+### 12.2 Publicação no GitHub Pages
 
-*(Etapas 8 e 9.)* `tools/empacotar.mjs` gerará `dist/oratoria-pasta.zip` e `dist/oratoria-portatil.html` (com o manual operacional também em HTML). Workflows: `verificar.yml`, `publicar.yml` (raiz no Pages, sem `tools/`, `.github/`, `node_modules/`, `dist/`, `package*.json`) e `release.yml` (tag `v*`).
+O Pages está no modo **GitHub Actions** (`build_type: workflow`); endereço: https://marceloclr.github.io/apresenta/ (subpasta `/apresenta/`: todos os caminhos da aplicação são relativos).
+
+| Workflow | Quando | O que faz |
+|---|---|---|
+| `.github/workflows/verificar.yml` | todo push e pull request (e manual) | checkout, Node LTS, `npm ci`, `node tools/verificar.mjs` |
+| `.github/workflows/publicar.yml` | ao fim de um "Verificar" bem-sucedido de push na `main` (e manual) | monta `_site/` com `rsync`, sem arquivos ocultos, `tools/`, `node_modules/`, `dist/` e `package*.json`; `actions/upload-pages-artifact` e `actions/deploy-pages` |
+
+Uma verificação reprovada impede a publicação: o site continua na última versão aprovada.
+
+### 12.3 Edições portáteis e *release*
+
+*(Etapa 9.)* `tools/empacotar.mjs` gerará `dist/oratoria-pasta.zip` e `dist/oratoria-portatil.html` (com o manual operacional também em HTML) e `release.yml` (tag `v*`).
 
 ## 13. Decisões de projeto
 

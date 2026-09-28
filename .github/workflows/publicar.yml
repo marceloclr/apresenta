@@ -1,0 +1,47 @@
+# Publicação no GitHub Pages depois de a verificação passar na branch main.
+# O site recebe só a aplicação: ficam de fora tools/, .github/, node_modules/, dist/,
+# package*.json e arquivos ocultos.
+name: Publicar
+
+on:
+  workflow_run:
+    workflows: [Verificar]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  publicar:
+    if: github.event_name == 'workflow_dispatch' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push')
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.implantacao.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+      - name: Montar o site
+        run: |
+          mkdir -p _site
+          rsync -a \
+            --exclude='.*' --exclude='_site/' --exclude='tools/' --exclude='node_modules/' \
+            --exclude='dist/' --exclude='package.json' --exclude='package-lock.json' \
+            ./ _site/
+          test -f _site/index.html && test -f _site/sw.js && test -f _site/manifest.webmanifest
+          du -sh _site
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: implantacao
+        uses: actions/deploy-pages@v4
