@@ -74,6 +74,8 @@
   <script defer src="js/interface/miniaturas.js"></script>
   <script defer src="js/interface/ingestao.js"></script>
   <script defer src="js/interface/acervo.js"></script>
+  <script defer src="js/interface/editor-tabelas.js"></script>
+  <script defer src="js/interface/painel-tema.js"></script>
   <script defer src="js/interface/painel-composicao.js"></script>
   <script defer src="js/interface/app.js"></script>
 </head>
@@ -244,8 +246,9 @@
               <p>Edição tabular, importação de CSV e conversão em gráfico.</p>
             </header>
             <div class="cartao" data-cor="tabelas">
-              <h3>Em preparação</h3>
-              <p class="cartao-nota">Editor de células, classes de estilo e alternância para gráfico.</p>
+              <p class="cartao-nota" id="tabelas-estado" aria-live="polite">O cursor não está numa tabela.</p>
+              <p class="aviso-faixa" id="tabelas-pendente" hidden>Há alterações na grade ainda não gravadas no texto.</p>
+              <div class="tabelas-corpo" id="tabelas-corpo"></div>
             </div>
           </section>
 
@@ -255,8 +258,88 @@
               <p>Modelo visual dos slides e ajustes finos.</p>
             </header>
             <div class="cartao" data-cor="tema">
-              <h3>Em preparação</h3>
-              <p class="cartao-nota">Aurora, Marfim, Grafite e Nanquim, com comparação lado a lado.</p>
+              <h3>Modelo</h3>
+              <p class="cartao-nota">Sala clara, fundo claro; sala escura, fundo escuro.</p>
+              <div class="lista-modelos" id="lista-modelos" role="radiogroup" aria-label="Modelo de apresentação"></div>
+              <div class="grupo-botoes">
+                <button type="button" class="botao" id="botao-comparar" aria-expanded="false"
+                        data-dica="Mostra o slide sob o cursor em cada um dos modelos, lado a lado, com os ajustes atuais. Clique num deles para aplicá-lo.">Comparar com o slide atual</button>
+              </div>
+              <div class="comparacao-modelos" id="comparacao-modelos" hidden></div>
+            </div>
+            <div class="cartao" data-cor="tema">
+              <h3>Ajustes finos
+                <button type="button" class="botao botao-discreto" id="botao-restaurar-tema"
+                        data-dica="Devolve acento, grade de fundo e escala tipográfica aos valores do modelo. O cabeçalho do texto (rodapé, numeração, logotipo) não é alterado.">Restaurar padrão do modelo</button>
+              </h3>
+              <div class="campo">
+                <span class="campo-rotulo" id="rotulo-acento">Cor de acento</span>
+                <div class="grupo-campos">
+                  <input type="color" id="campo-acento" aria-labelledby="rotulo-acento"
+                         data-dica="Cor de faixas, marcadores e destaques. Se não tiver contraste suficiente como texto, o sistema usa uma variante ajustada nos links e textos em cor.">
+                  <button type="button" class="botao botao-discreto" id="botao-acento-modelo"
+                          data-dica="Volta a usar a cor de acento do modelo.">Usar a do modelo</button>
+                </div>
+                <span class="campo-ajuda" id="nota-acento" aria-live="polite"></span>
+              </div>
+              <label class="opcao">
+                <input type="checkbox" id="campo-grade"
+                       data-dica="Liga ou desliga a grade técnica desenhada no fundo dos slides.">
+                Grade de fundo
+              </label>
+              <div class="campo">
+                <label class="campo-rotulo" for="campo-grade-intensidade">Intensidade da grade <output id="saida-grade" for="campo-grade-intensidade">100%</output></label>
+                <input type="range" id="campo-grade-intensidade" min="0" max="150" step="10" value="100"
+                       data-dica="Intensidade das linhas da grade, de 0 a 150% da calibração do modelo.">
+              </div>
+              <div class="campo">
+                <label class="campo-rotulo" for="campo-escala">Escala tipográfica <output id="saida-escala" for="campo-escala">100%</output></label>
+                <input type="range" id="campo-escala" min="90" max="115" step="1" value="100"
+                       data-dica="Aumenta ou reduz todo o texto dos slides, de 90 a 115%. Aumente para plateias distantes; reduza para conteúdo denso (tabelas longas podem ser divididas em mais slides).">
+              </div>
+            </div>
+            <div class="cartao" data-cor="tema">
+              <h3>Cabeçalho da apresentação</h3>
+              <p class="cartao-nota">Gravado no início do texto; Ctrl+Z desfaz.</p>
+              <div class="grupo-campos">
+                <label class="campo">
+                  <span class="campo-rotulo">Proporção</span>
+                  <select class="entrada" id="campo-proporcao" style="--largura: 20ch"
+                          data-dica="Panorâmica (16:9) para telas e projetores modernos; clássica (4:3) para projetores antigos."></select>
+                </label>
+                <label class="campo">
+                  <span class="campo-rotulo">Transição</span>
+                  <select class="entrada" id="campo-transicao" style="--largura: 12ch"
+                          data-dica="Efeito na passagem entre slides. Anulado para quem prefere movimento reduzido no sistema."></select>
+                </label>
+              </div>
+              <label class="campo">
+                <span class="campo-rotulo">Rodapé</span>
+                <input type="text" class="entrada" id="campo-rodape" style="--largura: 44ch" maxlength="120" autocomplete="off"
+                       placeholder="Ex.: SEPLAG/CE · Uso educacional"
+                       data-dica="Texto no pé de todos os slides, exceto o de título. Até 120 caracteres; quebras de linha não são aceitas.">
+              </label>
+              <div class="grupo-campos">
+                <label class="opcao">
+                  <input type="checkbox" id="campo-numeracao"
+                         data-dica="Mostra &quot;3 / 12&quot; no pé de cada slide.">
+                  Numeração
+                </label>
+                <label class="campo">
+                  <span class="campo-rotulo">Logotipo</span>
+                  <select class="entrada" id="campo-logotipo" style="--largura: 24ch"
+                          data-dica="Imagem do acervo exibida no pé dos slides."></select>
+                </label>
+              </div>
+            </div>
+            <div class="cartao" data-cor="tema">
+              <h3>Duração estimada</h3>
+              <label class="campo">
+                <span class="campo-rotulo">Minutos por slide</span>
+                <input type="text" class="entrada" id="campo-minutos" style="--largura: 6ch" inputmode="decimal" autocomplete="off"
+                       data-dica="Fator do indicador de duração na barra superior (slides × minutos). Aceita decimais, como 1,5.">
+                <span class="campo-ajuda" id="ajuda-minutos" data-estado="erro" aria-live="polite"></span>
+              </label>
             </div>
           </section>
 

@@ -237,7 +237,19 @@
     while (i < max && atual.charCodeAt(i) === novo.charCodeAt(i)) i++;
     let j = 0;
     while (j < max - i && atual.charCodeAt(atual.length - 1 - j) === novo.charCodeAt(novo.length - 1 - j)) j++;
-    ED.substituir(i, atual.length - j, novo.slice(i, novo.length - j), opcoes);
+    const fimAntigo = atual.length - j;
+    const trecho = novo.slice(i, novo.length - j);
+    if (opcoes.preservarCursor) {
+      // O cursor fica onde estava no texto (deslocado se a mudança ocorreu antes dele)
+      const pos = area.selectionStart;
+      const destino = pos >= fimAntigo ? pos + trecho.length - (fimAntigo - i) : pos <= i ? pos : i + trecho.length;
+      const rolagem = area.scrollTop;
+      ED.substituir(i, fimAntigo, trecho, Object.assign({}, opcoes, { selecao: destino }));
+      area.scrollTop = rolagem;
+      sincronizarGeometria();
+      return;
+    }
+    ED.substituir(i, fimAntigo, trecho, opcoes);
   };
 
   /**

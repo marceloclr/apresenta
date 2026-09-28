@@ -393,6 +393,60 @@
 output { font: 600 12px/1 var(--i-fonte-mono); color: var(--i-texto); margin-left: 6px; }
 input[type="range"] { width: min(100%, 260px); accent-color: var(--i-acento); }
 
+/* ═══════════════════════════ Formulários compostos ═══════════════════════════ */
+
+.grupo-campos { display: flex; flex-wrap: wrap; align-items: end; gap: 8px 14px; margin: 4px 0 8px; }
+.opcao { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; margin: 4px 12px 4px 0; }
+.opcao input[type="checkbox"], .opcao input[type="radio"] { accent-color: var(--i-acento); width: 15px; height: 15px; }
+.opcao .entrada { height: 28px; }
+.campo-grupo { border: 0; margin: 8px 0; padding: 0; display: flex; flex-wrap: wrap; align-items: center; }
+.campo-grupo > legend { width: 100%; margin-bottom: 4px; padding: 0; }
+.campo + .campo, .cartao > .campo { margin-top: 8px; }
+select.entrada { padding-right: 4px; }
+input[type="color"] { width: 44px; height: 32px; padding: 2px; border: 1px solid var(--i-borda-forte); border-radius: var(--i-raio-p); background: var(--i-superficie); cursor: pointer; }
+
+/* ═══════════════════════════ Editor de tabelas ═══════════════════════════ */
+
+.tabelas-corpo { display: grid; gap: 8px; }
+.tabelas-corpo > h3 { margin-top: 6px; }
+.grade-rolagem { overflow: auto; max-height: 46vh; border: 1px solid var(--i-borda); border-radius: var(--i-raio-p); }
+.grade-tabela { border-collapse: collapse; font-size: 12.5px; }
+.grade-tabela th, .grade-tabela td { padding: 3px; border-bottom: 1px solid var(--i-borda); vertical-align: middle; }
+.grade-tabela thead th { position: sticky; top: 0; z-index: 1; background: color-mix(in srgb, var(--i-cor-tabelas) 10%, var(--i-superficie)); }
+.grade-tabela thead .celula { font-weight: 600; }
+.grade-tabela .celula { width: auto; height: 28px; padding: 3px 6px; font-size: 12.5px; }
+.grade-alinhamentos td, .grade-alinhamentos th { background: var(--i-superficie-2); }
+.grade-coluna { display: flex; gap: 2px; align-items: center; }
+.grade-coluna select { height: 26px; font-size: 11.5px; width: auto; }
+.grade-tabela .botao-icone { width: 24px; min-height: 24px; }
+
+/* ═══════════════════════════════ Tema ═══════════════════════════════ */
+
+.lista-modelos { display: grid; gap: 6px; margin: 8px 0; }
+.modelo {
+  display: grid; gap: 5px; padding: 8px 10px;
+  border: 1px solid var(--i-borda); border-radius: var(--i-raio-p);
+  background: var(--i-superficie); cursor: pointer;
+  transition: border-color var(--i-transicao), box-shadow var(--i-transicao);
+}
+.modelo:hover { border-color: var(--i-cor-tema); }
+.modelo:has(input:focus-visible) { outline: 2px solid var(--i-acento); outline-offset: 2px; }
+.modelo-ativo { border-color: var(--i-cor-tema); box-shadow: inset var(--i-faixa) 0 0 var(--i-cor-tema); background: color-mix(in srgb, var(--i-cor-tema) 8%, var(--i-superficie)); }
+.modelo-topo { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.modelo-topo strong { font: 600 14px/1.2 var(--i-fonte-serif); }
+.modelo-amostras { display: flex; gap: 3px; }
+.amostra { width: 22px; height: 14px; border-radius: 3px; box-shadow: inset 0 0 0 1px rgba(128, 128, 128, .35); }
+.modelo-descricao { font-size: 12px; color: var(--i-texto-2); }
+
+.comparacao-modelos { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+.comparacao-modelos[hidden] { display: none; }
+.comparacao-item { display: grid; gap: 4px; padding: 4px; background: var(--i-superficie); border: 1px solid var(--i-borda); border-radius: var(--i-raio-p); cursor: pointer; }
+.comparacao-item:hover { border-color: var(--i-cor-tema); }
+.comparacao-item.modelo-ativo { border-color: var(--i-cor-tema); box-shadow: 0 0 0 2px var(--i-cor-tema); }
+.comparacao-quadro { position: relative; display: block; width: 100%; overflow: hidden; border-radius: 4px; background: var(--s-fundo); }
+.comparacao-quadro > .o-slide { position: absolute; left: 0; top: 0; transform-origin: 0 0; pointer-events: none; }
+.comparacao-nome { font-size: 12px; font-weight: 600; }
+
 /* ═══════════════════════════════ Miniaturas ═══════════════════════════════ */
 
 .miniaturas-corpo { overflow: hidden; }

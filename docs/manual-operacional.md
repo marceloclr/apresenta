@@ -129,6 +129,22 @@ Arraste imagens (PNG, JPEG, WebP, GIF, SVG) e planilhas CSV para qualquer ponto 
 - **Citado N× / não citado.** Mostra se o arquivo é usado no texto. Só as imagens citadas entram na apresentação exportada.
 - **Remover** pede um segundo toque para confirmar e não pode ser desfeito.
 
+### 4.2 Aba Tabelas
+
+Leve o cursor do editor para dentro de uma tabela e abra a aba **Tabelas**:
+
+- **Tabela escrita:** cada célula vira um campo. Escolha o alinhamento de cada coluna, acrescente ou retire linhas e colunas e marque os estilos (linhas alternadas, compacta, números em padrão brasileiro, linha ou coluna realçada). Nada muda no texto até você clicar em **Gravar no texto** (Ctrl+Z desfaz). Enquanto houver alterações não gravadas, a aba continua presa a essa tabela, mesmo que o cursor saia dela.
+- **Tabela de planilha** (bloco ```` ```tabela ````): escolha a planilha do acervo, as colunas, a ordenação, o limite de linhas e o estilo.
+- **Fora de uma tabela:** crie uma tabela vazia com o número de linhas e colunas desejado, ou transforme uma planilha CSV do acervo em tabela — como **bloco de dados** (atualiza sozinho quando a planilha muda) ou como **tabela escrita** (editável célula a célula).
+- **Converter em gráfico** insere, logo abaixo da tabela, um gráfico com os mesmos dados; a tabela permanece.
+
+### 4.3 Aba Tema
+
+- **Modelo:** escolha entre Aurora, Marfim, Grafite e Nanquim; cada cartão indica o ambiente recomendado. **Comparar com o slide atual** mostra o slide do cursor nos quatro modelos, lado a lado; clique num deles para aplicá-lo.
+- **Ajustes finos:** cor de acento (se ela não for legível como texto, o sistema escurece ou clareia a cor dos links e explica o ajuste logo abaixo), grade de fundo e sua intensidade, e escala de todo o texto. **Restaurar padrão do modelo** desfaz esses ajustes.
+- **Cabeçalho da apresentação:** proporção, transição, rodapé, numeração e logotipo. São gravados no início do texto, como se você os tivesse digitado (Ctrl+Z desfaz).
+- **Minutos por slide:** fator do indicador de duração.
+
 ## 5. Escrevendo os slides: guia de sintaxe
 
 ### 5.1 Cabeçalho (front-matter)
