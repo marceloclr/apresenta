@@ -46,6 +46,29 @@
     memoria: 'Guarda apenas nesta sessão',
   };
 
+  /** Blocos prontos da aba Composição (chaves usadas em painel-composicao.js). */
+  R.ROTULO_BLOCO = {
+    'fragmento': 'Revelação progressiva',
+    'destaque': 'Bloco em destaque',
+    'notas': 'Notas do orador',
+    'colunas': 'Duas colunas',
+    'imagem': 'Imagem',
+    'tabela': 'Tabela escrita',
+    'tabela-dados': 'Tabela de planilha',
+    'grafico': 'Gráfico',
+    'codigo': 'Código',
+  };
+
+  R.ROTULO_CLASSE_TABELA = {
+    'zebra': 'Linhas alternadas',
+    'compacta': 'Compacta',
+    'numerica': 'Números em padrão brasileiro',
+  };
+
+  R.ROTULO_ALINHAMENTO = { '': 'Padrão', esquerda: 'À esquerda', centro: 'Centralizado', direita: 'À direita' };
+
+  R.ROTULO_TIPO_ACERVO = { imagem: 'Imagem', csv: 'Planilha CSV', planilha: 'Planilha' };
+
   /** Rótulo genérico: devolve o texto do mapa ou a própria chave, se ausente. */
   R.rotulo = function (mapa, chave) {
     return (mapa && Object.prototype.hasOwnProperty.call(mapa, chave)) ? mapa[chave] : String(chave);
@@ -57,4 +80,5 @@
   R.rotuloTransicao = (chave) => R.rotulo(R.ROTULO_TRANSICAO, chave);
   R.rotuloGrafico = (chave) => R.rotulo(R.ROTULO_GRAFICO, chave);
   R.rotuloGravidade = (chave) => R.rotulo(R.ROTULO_GRAVIDADE, chave);
+  R.rotuloBloco = (chave) => R.rotulo(R.ROTULO_BLOCO, chave);
 })(window.Oratoria);

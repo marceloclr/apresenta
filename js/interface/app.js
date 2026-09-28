@@ -1,5 +1,10 @@
 // js/interface/app.js — orquestração da interface. ÚLTIMO script a carregar.
 // Scripts com defer executam após a análise do documento: o DOM já está disponível.
+//
+// Responsabilidades: identidade, tema da interface, título do projeto, avisos na tela
+// (O.ui.notificar), confirmação em dois toques (O.ui.doisToques), indicadores da barra
+// superior, guarda automática e convite para retomar o último trabalho (D29), botões de
+// apresentação, condições do ambiente (aba Conferência) e a inicialização dos módulos.
 
 (function (O) {
   'use strict';
@@ -14,6 +19,52 @@
     if (!regiaoViva) return;
     regiaoViva.textContent = '';
     setTimeout(() => { regiaoViva.textContent = texto; }, 30);
+  };
+
+  // ── Avisos na tela (canto inferior direito) ────────────────────────────
+  /** Mostra um aviso passageiro e o anuncia. gravidade: 'ok' | 'aviso' | 'erro' | 'info'. */
+  O.ui.notificar = function (texto, { gravidade = 'info', duracao } = {}) {
+    const pilha = U.$('#avisos-tela');
+    O.ui.anunciar(texto);
+    if (!pilha) return;
+    const fechar = U.el('button', {
+      type: 'button', class: 'botao botao-discreto botao-icone aviso-tela-fechar',
+      'data-dica': 'Fecha este aviso. Nada é alterado no projeto.', 'aria-label': 'Fechar aviso',
+    }, '×');
+    const aviso = U.el('div', { class: 'aviso-tela', 'data-estado': gravidade, role: gravidade === 'erro' ? 'alert' : 'status' }, U.el('span', null, texto), fechar);
+    const remover = () => aviso.remove();
+    fechar.addEventListener('click', remover);
+    pilha.append(aviso);
+    while (pilha.children.length > 4) pilha.firstElementChild.remove();
+    setTimeout(remover, duracao || (gravidade === 'erro' ? 12000 : 7000));
+  };
+
+  // ── Confirmação em dois toques ─────────────────────────────────────────
+  /**
+   * Ações irreversíveis sem janelas modais: o primeiro toque troca o rótulo por uma pergunta
+   * (e a dica explica a consequência); o segundo, dentro de C.ATRASO_CONFIRMACAO_MS, confirma.
+   * `exigir()` falso executa direto (ex.: nada a perder).
+   */
+  O.ui.doisToques = function (botao, pergunta, acao, { exigir = () => true } = {}) {
+    let armado = null;
+    let original = null;
+    const desarmar = () => {
+      if (!armado) return;
+      clearTimeout(armado);
+      armado = null;
+      botao.classList.remove('botao-confirmar');
+      botao.replaceChildren(...original);
+    };
+    botao.addEventListener('click', () => {
+      if (armado) { desarmar(); acao(); return; }
+      if (!exigir()) { acao(); return; }
+      original = Array.from(botao.childNodes);
+      botao.replaceChildren(pergunta);
+      botao.classList.add('botao-confirmar');
+      O.ui.anunciar(`${pergunta} Acione de novo para confirmar.`);
+      armado = setTimeout(desarmar, C.ATRASO_CONFIRMACAO_MS);
+    });
+    botao.addEventListener('blur', () => setTimeout(desarmar, 150));
   };
 
   // ── Identidade (APP_NOME e versão vêm de config.js) ────────────────────
@@ -72,6 +123,143 @@
       E.definir('projeto.titulo', campo.value.trim());
     });
     campo.addEventListener('keydown', (ev) => { if (ev.key === 'Enter') campo.blur(); });
+    // Projeto carregado (abrir, exemplo, retomar): reflete o título
+    E.observar('projeto.titulo', (v) => { if (document.activeElement !== campo && (v || '') !== campo.value.trim()) campo.value = v || ''; });
+    // Sem título próprio, o campo sugere o título do cabeçalho do texto
+    E.ouvir('previa:interpretada', ({ r }) => { campo.placeholder = r.meta.titulo || 'Apresentação sem título'; });
+  }
+
+  // ── Indicadores da barra superior (§5.3) ───────────────────────────────
+  let bytesFontes = null;   // { familia: bytes } do embutível de fontes
+  let bytesChart = null;
+
+  function lerEmbutiveisParaEstimativa() {
+    if (bytesFontes) return;
+    bytesFontes = {};
+    O.carregador.embutivel('fontes').then((faces) => {
+      for (const f of faces) bytesFontes[f.familia] = (bytesFontes[f.familia] || 0) + f.base64.length;
+      atualizarTamanho();
+    }).catch(() => { /* estimativa segue sem a parcela das fontes */ });
+    O.carregador.embutivel('chart').then((codigo) => { bytesChart = codigo.length; atualizarTamanho(); }).catch(() => {});
+  }
+
+  function definirIndicador(id, valor, dica) {
+    const el = U.$(`#${id}`);
+    if (!el) return;
+    const alvo = U.$('[data-valor]', el);
+    if (alvo) alvo.textContent = valor;
+    if (dica !== undefined) O.ui.dicas.definir(el, { texto: dica });
+  }
+
+  function totalDeSlides() {
+    const completa = O.ui.previa.completa();
+    const r = O.ui.previa.interpretacao();
+    if (completa && r && completa.resultado.slides.length === r.slides.length) return completa.secoes.length;
+    return r ? r.slides.length : 0;
+  }
+
+  function atualizarContagem() {
+    const n = totalDeSlides();
+    const fator = E.obter('projeto.opcoes.minutosPorSlide') || C.MINUTOS_POR_SLIDE;
+    const completa = O.ui.previa.completa();
+    const extras = completa ? completa.secoes.length - completa.resultado.slides.length : 0;
+    definirIndicador('ind-slides', U.formatarNumero(n),
+      `Quantidade de slides que a apresentação terá${extras > 0 ? `, incluídos ${extras} criado(s) pela divisão de tabelas longas` : ''}.`);
+    definirIndicador('ind-tempo', U.formatarDuracao(n * fator),
+      `Estimativa de duração da fala: ${U.formatarNumero(n)} slides × ${U.formatarDecimal(fator, 2)} min. O fator por slide é ajustável na aba Tema.`);
+    O.ui.dicas.definir(U.$('#ind-tempo'), { formula: `slides × ${U.formatarDecimal(fator, 2)} min` });
+  }
+
+  function atualizarTamanho() {
+    const r = O.ui.previa.completa();
+    if (!r) return;
+    if (!r.secoes.length) { definirIndicador('ind-tamanho', '—', 'Peso aproximado do HTML autocontido. Aparece quando houver slides.'); return; }
+    const S = O.slides;
+    const acervo = E.obter('projeto.acervo') || {};
+    const buscar = U.criarBuscaPorNome(acervo);
+    // Imagens efetivamente usadas: citadas no texto, fundos por diretiva e logotipo
+    // (lidas do HTML interpretado: layouts como imagem-fundo convertem a <img> em fundo)
+    const usadas = new Set();
+    r.resultado.slides.forEach((s) => {
+      for (const m of s.html.matchAll(/data-arquivo="([^"]+)"/g)) usadas.add(m[1].replace(/&amp;/g, '&').replace(/&quot;/g, '"'));
+      if (s.fundo) usadas.add(s.fundo);
+    });
+    if (r.meta.logotipo) usadas.add(String(r.meta.logotipo));
+    const itens = new Set();
+    usadas.forEach((nome) => { const item = buscar(nome); if (item && item.tipo === 'imagem') itens.add(item); });
+    const imagens = Array.from(itens).reduce((t, i) => t + (i.bytes || 0), 0) * 4 / 3;
+    const temGrafico = r.secoes.some((s) => s.querySelector('figure.o-grafico'));
+    const motor = S.motorSlides.toString().length + S.motorApresentador.toString().length + (temGrafico ? S.motorGraficos.toString().length : 0);
+    const tema = r.css.length;
+    const conteudo = r.secoes.reduce((t, s) => t + s.outerHTML.replace(/data:[^"')\s]+/g, '').length, 0);
+    const familias = O.temas.familiasUsadas(r.meta.tema);
+    const fontes = bytesFontes ? familias.reduce((t, f) => t + (bytesFontes[f] || 0), 0) : 0;
+    const chart = temGrafico ? (bytesChart || 0) : 0;
+    const total = imagens + motor + tema + conteudo + fontes + chart;
+    const pendente = !bytesFontes || !Object.keys(bytesFontes).length || (temGrafico && bytesChart === null);
+    const partes = [
+      `Imagens (${itens.size}): ${U.formatarBytes(imagens)}`,
+      `Motor dos slides: ${U.formatarBytes(motor)}`,
+      `Tema e layouts: ${U.formatarBytes(tema)}`,
+      `Fontes (${familias.length} família${familias.length > 1 ? 's' : ''}): ${bytesFontes && Object.keys(bytesFontes).length ? U.formatarBytes(fontes) : 'em cálculo'}`,
+      `Chart.js: ${temGrafico ? (bytesChart !== null ? U.formatarBytes(chart) : 'em cálculo') : 'não usado'}`,
+      `Conteúdo dos slides: ${U.formatarBytes(conteudo)}`,
+    ];
+    definirIndicador('ind-tamanho', `${pendente ? '≈ ' : ''}${U.formatarBytes(total)}`,
+      `Peso aproximado do HTML autocontido. Decomposição — ${partes.join(' · ')}. Somente as imagens usadas nos slides entram no arquivo.`);
+  }
+
+  function iniciarIndicadores() {
+    E.ouvir('previa:interpretada', atualizarContagem);
+    E.ouvir('previa:completa', () => { atualizarContagem(); lerEmbutiveisParaEstimativa(); atualizarTamanho(); });
+    E.observar('projeto.opcoes', atualizarContagem);
+  }
+
+  // ── Guarda automática e "Retomar último trabalho" (§5.5, D29) ──────────
+  async function iniciarGuarda() {
+    await O.persistencia.iniciar();
+    const encontrado = await O.persistencia.rascunhoDisponivel('atual');
+    // O rascunho encontrado é posto à parte ('anterior'): o autossalvamento desta sessão
+    // grava em 'atual' sem destruí-lo antes que o usuário decida.
+    if (encontrado) await O.persistencia.gravar('rascunho', 'anterior', encontrado.projeto).catch(() => {});
+    O.persistencia.ativarAutossalvamento();
+    const anterior = encontrado || await O.persistencia.rascunhoDisponivel('anterior');
+    if (anterior) oferecerRetomada(anterior);
+  }
+
+  function oferecerRetomada(r) {
+    const faixa = U.$('#faixa-retomar');
+    if (!faixa) return;
+    const quando = r.atualizadoEm ? U.formatarDataHora(r.atualizadoEm) : 'data desconhecida';
+    const titulo = r.projeto.titulo || (O.conteudo.extrairFrontMatter(r.projeto.markdown).meta || {}).titulo || 'sem título';
+    U.$('[data-texto]', faixa).textContent = `Há um trabalho guardado neste navegador: "${titulo}", de ${quando} (${U.formatarNumero(r.caracteres)} caracteres, ${r.imagens} arquivo(s) no acervo).`;
+    faixa.hidden = false;
+    const retomar = U.$('#botao-retomar');
+    const dispensar = U.$('#botao-dispensar-retomada');
+    retomar.onclick = () => {
+      E.carregarProjeto(r.projeto);
+      faixa.hidden = true;
+      O.ui.editor.irParaLinha(1);
+      O.ui.notificar(`Trabalho "${titulo}" retomado.`, { gravidade: 'ok' });
+    };
+    dispensar.onclick = () => { faixa.hidden = true; O.ui.editor.focar(); };
+  }
+
+  // ── Apresentação ───────────────────────────────────────────────────────
+  async function apresentar(doSlideAtual) {
+    const projeto = E.obter('projeto');
+    if (!(projeto.markdown || '').trim()) { O.ui.notificar('Não há slides para apresentar: escreva ou abra um texto primeiro.', { gravidade: 'aviso' }); return; }
+    const indice = doSlideAtual ? O.ui.previa.secaoDoSlide(O.ui.previa.slideAtual()) : 0;
+    await O.slides.apresentar(projeto, { indice, telaCheia: true });
+  }
+
+  function iniciarApresentacao() {
+    U.$('#botao-apresentar')?.addEventListener('click', () => apresentar(true));
+    U.$('#botao-apresentar-inicio')?.addEventListener('click', () => apresentar(false));
+    U.$('#botao-apresentar-atual')?.addEventListener('click', () => apresentar(true));
+    U.$('#botao-previa-apresentar')?.addEventListener('click', () => apresentar(true));
+    // Ao encerrar, o editor acompanha o slide em que a apresentação parou
+    E.ouvir('apresentacao:encerrada', ({ origem }) => { if (Number.isInteger(origem)) O.ui.previa.irParaSlide(origem); });
   }
 
   // ── Condições do ambiente (aba Conferência) ────────────────────────────
@@ -152,7 +340,7 @@
     selo.textContent = online ? 'disponível' : 'indisponível';
   }
 
-  // ── Preferências salvas e rascunho ─────────────────────────────────────
+  // ── Preferências salvas ────────────────────────────────────────────────
   async function aplicarPreferencias() {
     await O.persistencia.iniciar();
     const tema = await O.persistencia.preferencia('temaInterface', null);
@@ -169,6 +357,13 @@
     iniciarTituloProjeto();
     O.ui.abas.iniciar(U.$('[role="tablist"]'), E.obter('interface.abaAtiva'));
 
+    O.ui.editor.iniciar();
+    O.ui.previa.iniciar();
+    O.ui.ingestao.iniciar();
+    O.ui.composicao.iniciar();
+    iniciarIndicadores();
+    iniciarApresentacao();
+
     let ambienteConferido = false;
     E.ouvir('aba:ativada', ({ aba }) => {
       if (aba === 'conferencia' && !ambienteConferido) { ambienteConferido = true; conferirAmbiente(); }
@@ -176,10 +371,12 @@
     if (O.ui.abas.atual() === 'conferencia') { ambienteConferido = true; conferirAmbiente(); }
     U.$('#botao-reconferir-ambiente')?.addEventListener('click', () => { conferirAmbiente(); O.ui.anunciar('Conferência do ambiente refeita.'); });
 
+    iniciarGuarda().catch((e) => console.error(`[${C.APP_NOME}] guarda automática:`, e));
+
     aplicarPreferencias().finally(() => {
       if (C.DESENVOLVIMENTO) {
         console.info(`[${C.APP_NOME}] v${C.VERSAO} · ${location.protocol} · guarda: ${O.persistencia.modo()}`);
-        O.ui.dicas.auditar();
+        setTimeout(() => O.ui.dicas.auditar(), 1500);
       }
     });
 

@@ -458,6 +458,69 @@
     };
   }
 
+  // ═══════════════════════════ Edição estrutural do texto ═══════════════════════════
+  // Funções puras usadas pela interface: devolvem o novo texto, sem tocar no estado.
+
+  const PALAVRAS_YAML = /^(true|false|yes|no|on|off|null|sim|nao|não|~)$/i;
+
+  /** Valor escalar em YAML: aspas duplas (sintaxe JSON, válida em YAML) quando necessárias. */
+  function valorYaml(v) {
+    if (typeof v === 'boolean') return v ? 'true' : 'false';
+    if (typeof v === 'number' && Number.isFinite(v)) return String(v);
+    const s = String(v).replace(/\s*\n\s*/g, ' ');
+    const arriscado = s === '' || s !== s.trim() || PALAVRAS_YAML.test(s) || /^[-+]?[\d.]/.test(s)
+      || /[:#"'`{}\[\]|>&*!%@\\]/.test(s) || /^[-?,]/.test(s);
+    return arriscado ? JSON.stringify(s) : s;
+  }
+
+  /**
+   * Define (ou remove, com valor null) uma chave do front-matter, preservando as demais linhas.
+   * Sem front-matter, cria um no início do texto. Linhas de continuação indentadas da chave
+   * anterior (valores em bloco) são substituídas junto.
+   */
+  I.definirMeta = function (markdown, chave, valor) {
+    const texto = String(markdown || '').replace(/\r\n?/g, '\n');
+    const linha = valor === null || valor === undefined ? null : `${chave}: ${valorYaml(valor)}`;
+    const m = texto.match(/^(﻿?)---[ \t]*\n([\s\S]*?)\n---[ \t]*(\n|$)/);
+    if (!m) return linha === null ? texto : `---\n${linha}\n---\n\n${texto}`;
+    const corpo = m[2].split('\n');
+    const i = corpo.findIndex((l) => new RegExp(`^${chave}\\s*:`).test(l));
+    if (i >= 0) {
+      let fim = i + 1;
+      while (fim < corpo.length && /^[ \t]+\S/.test(corpo[fim])) fim++;
+      corpo.splice(i, fim - i, ...(linha === null ? [] : [linha]));
+    } else if (linha !== null) corpo.push(linha);
+    return `${m[1]}---\n${corpo.join('\n')}\n---${m[3]}${texto.slice(m[0].length)}`;
+  };
+
+  /**
+   * Move o slide `de` para a posição `para` (índices do interpretador) e devolve
+   * { texto, linha } — linha (1-based) em que o slide movido passa a começar — ou null se o
+   * movimento for inválido. O slide 0 (título, D14) e o front-matter ficam fixos (D27).
+   * Os separadores são normalizados como '---'; o conteúdo de cada slide é preservado.
+   */
+  I.reordenarSlides = function (markdown, de, para) {
+    const texto = String(markdown || '').replace(/\r\n?/g, '\n');
+    const fm = I.extrairFrontMatter(texto);
+    const brutos = fm.corpo.trim() ? I.separarSlides(fm.corpo, fm.linhasOcupadas) : [];
+    const n = brutos.length;
+    if (!(de >= 1 && para >= 1 && de < n && para < n && de !== para)) return null;
+    const linhas = texto.split('\n');
+    const blocos = brutos.map((b) => linhas.slice(b.linhaInicio - 1, b.linhaFim));
+    const prefixo = linhas.slice(0, brutos[0].linhaInicio - 1);
+    const sufixo = linhas.slice(brutos[n - 1].linhaFim);
+    const ordem = blocos.map((_, i) => i);
+    ordem.splice(para, 0, ordem.splice(de, 1)[0]);
+    const saida = prefixo.slice();
+    let linhaMovido = 1;
+    ordem.forEach((indice, pos) => {
+      if (pos > 0) saida.push('---');
+      if (indice === de) linhaMovido = saida.length + 1;
+      saida.push(...blocos[indice]);
+    });
+    return { texto: saida.concat(sufixo).join('\n'), linha: linhaMovido };
+  };
+
   /** Índice do slide que contém a linha (1-based) do editor. */
   I.slideDaLinha = function (resultado, linha) {
     const s = resultado.slides;

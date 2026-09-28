@@ -1,4 +1,4 @@
-# CLAUDE.md — Convenções do Oratória
+# CLAUDE.md — Convenções do Apresenta
 
 Estas regras valem para toda sessão de trabalho neste repositório. Em caso de dúvida,
 elas prevalecem sobre qualquer preferência momentânea. A especificação completa está
@@ -77,6 +77,14 @@ A aplicação abre por duplo clique no `index.html`, sem servidor e sem build.
 - **D24** Cliques sobre gráficos não avançam o slide.
 - **Encadeamento** do projeto aos slides em `js/slides/renderizador.js` (`O.slides.renderizar`, `O.slides.apresentar`).
 - **Controles indisponíveis** usam `aria-disabled="true"` + `data-dica-motivo` (via `O.ui.dicas.indisponivel`), nunca `disabled`, para que a dica explique o motivo.
+- **D25** O cabeçalho do texto (front-matter) é a fonte de verdade: tema, proporção, rodapé, numeração, logotipo e transição escolhidos na interface são gravados nele (`O.conteudo.definirMeta`); acento, grade e escala ficam em `projeto.ajustesTema`. `projeto.temaId` apenas espelha `meta.tema`.
+- **D26** Renderização em duas velocidades: pré-visualização do slide sob o cursor após 300 ms; renderização completa (paginação, miniaturas, indicadores, Conferência) após 1 s de inatividade.
+- **D27** Reordenar slides (miniaturas) move blocos de texto; o front-matter e o slide 0 (título) ficam fixos; separadores normalizados como `---`; desfazível com Ctrl+Z.
+- **D28** O indicador de tamanho usa o tamanho real dos embutíveis (fontes das famílias do tema, Chart.js se houver gráfico), lidos em segundo plano; até lá mostra "≈".
+- **D29** Guarda automática ativa desde a etapa 6. O rascunho encontrado na abertura é copiado para `rascunho/anterior` antes de a nova sessão gravar, e o convite "Retomar" o restaura.
+- **D30** Edições feitas pela interface passam por `document.execCommand('insertText')` para preservar o desfazer do navegador; ações irreversíveis (novo projeto, remover do acervo) usam confirmação em dois toques (`O.ui.doisToques`), sem janelas modais.
+- **D31** Nome da aplicação: **Apresenta** (`APP_NOME`). Identificadores estáveis mantidos: `window.Oratoria`, `APP_SLUG = 'oratoria'`, banco `oratoria`, `.oratoria.json`, arquivos `oratoria-*`.
+- **D32** Cada `<section>` montada leva `data-origem` (índice do slide no texto), preservado nas continuações de tabela: liga miniaturas, pré-visualização e apresentação ao editor.
 
 ## 6. Recursos de terceiros
 

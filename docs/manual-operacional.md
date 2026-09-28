@@ -1,11 +1,11 @@
-# Oratória — Manual operacional
+# Apresenta — Manual operacional
 
 > Guia de uso para quem compõe e apresenta. Não exige conhecimento técnico.
-> Versão do documento: **0.1.0 · etapa 5**. Itens marcados *(em preparação)* ainda não estão disponíveis nesta versão.
+> Versão do documento: **0.1.0 · etapa 6**. Itens marcados *(em preparação)* ainda não estão disponíveis nesta versão.
 
 ## Sumário
 
-1. O que é o Oratória
+1. O que é o Apresenta
 2. Como abrir
 3. A tela de trabalho
 4. Sua primeira apresentação
@@ -21,9 +21,9 @@
 
 ---
 
-## 1. O que é o Oratória
+## 1. O que é o Apresenta
 
-O Oratória transforma um texto simples, escrito em **Markdown**, numa apresentação de slides em HTML. Você escreve títulos, listas, tabelas e referências a imagens; o sistema cuida da diagramação, das cores e da tipografia, conforme o tema escolhido.
+O Apresenta transforma um texto simples, escrito em **Markdown**, numa apresentação de slides em HTML. Você escreve títulos, listas, tabelas e referências a imagens; o sistema cuida da diagramação, das cores e da tipografia, conforme o tema escolhido.
 
 A apresentação final é **um único arquivo `.html`**, que abre em qualquer navegador, sem internet e sem instalar nada.
 
@@ -69,15 +69,33 @@ O botão com sol ou lua alterna a **interface** entre clara e escura. Isso não 
 
 Navegue entre as abas com as setas **↑ ↓** e ative com **Enter**.
 
-**Centro: texto.** Onde você escreve *(editor em preparação)*.
-**Direita: pré-visualização** do slide em que está o cursor *(em preparação)*.
+**Centro: texto.** Onde você escreve, com as linhas numeradas e cores que distinguem títulos, separadores, instruções e blocos. Uma faixa colorida na margem marca as linhas do slide em que está o cursor.
+
+| Tecla no editor | Efeito |
+|---|---|
+| Tab / Shift+Tab | Recua / desfaz o recuo da linha |
+| Esc e, em seguida, Tab | Sai do editor (para quem navega pelo teclado) |
+| Ctrl+Z / Ctrl+Y | Desfaz / refaz — inclusive blocos inseridos pelos botões e a reordenação de slides |
+| Ctrl+V com uma imagem copiada | Guarda a imagem no Acervo e a cita no ponto do cursor |
+
+**Direita: pré-visualização** do slide em que está o cursor, atualizada enquanto você escreve. As setas **‹ ›** do cabeçalho levam o cursor ao slide anterior ou seguinte; **Apresentar daqui** abre a apresentação a partir dele. Na pré-visualização, os itens revelados aos poucos aparecem todos de uma vez.
+
 **Faixa inferior: sequência de slides** em miniatura *(em preparação)*.
+
+**Botão Apresentar** (barra superior): apresentação em tela cheia a partir do slide do cursor. Ao encerrar com **Esc**, o editor vai ao slide em que você parou.
 
 ## 4. Sua primeira apresentação
 
-*(O percurso completo — do texto à exportação — será descrito quando o editor e a exportação estiverem disponíveis.)*
+1. Na aba **Composição**, escolha **Novo projeto** — ou abra um **exemplo pronto** para ver tudo funcionando.
+2. Preencha o cabeçalho (título, autor, data, tema) e escreva os slides, separados por uma linha com `---`.
+3. Para acrescentar um slide já diagramado, use **Novo slide com layout**: ele entra logo após o slide do cursor. Para inserir uma lista progressiva, notas, colunas, tabela ou gráfico, use **Bloco no cursor**.
+4. Arraste para a janela as imagens e planilhas que for usar; elas vão para o **Acervo** e podem ser citadas pelo nome.
+5. Acompanhe o resultado na pré-visualização e os indicadores de slides, duração e peso na barra superior.
+6. Clique em **Apresentar**.
 
-Enquanto isso, o esqueleto de qualquer apresentação é este:
+Todos os botões de inserção podem ser desfeitos com **Ctrl+Z**. **Novo projeto** e a abertura de um exemplo substituem o trabalho atual: se houver texto, o botão pede um segundo toque para confirmar.
+
+O esqueleto de qualquer apresentação é este:
 
 ```markdown
 ---
@@ -295,7 +313,7 @@ Durante a apresentação, os botões **Barras · Linhas · Pizza · Rosca** troc
 
 ### 5.10 Importando documentos *(em preparação)*
 
-Um documento existente pode servir de ponto de partida. O Oratória o converte em texto de slides, que você revisa antes de apresentar. Tudo acontece no seu computador: nada é enviado pela internet.
+Um documento existente pode servir de ponto de partida. O Apresenta o converte em texto de slides, que você revisa antes de apresentar. Tudo acontece no seu computador: nada é enviado pela internet.
 
 | Formato | O que é aproveitado |
 |---|---|
@@ -323,7 +341,7 @@ Os quatro temas atendem ao nível AA de contraste em todos os textos. Cada um te
 
 ## 7. Apresentando
 
-*(O botão "Apresentar" da aba Apresentar e exportar chega na próxima versão; os comandos abaixo já valem para o motor de apresentação e para os arquivos exportados.)*
+Use o botão **Apresentar** da barra superior (a partir do slide do cursor) ou a aba **Apresentar e exportar** (**Do início** ou **Do slide atual**). Os comandos abaixo valem no editor e nos arquivos exportados.
 
 ### 7.1 Atalhos de teclado
 
@@ -368,9 +386,13 @@ Apresentações guardadas no navegador, numa pasta do computador ou pendrive, ou
 
 ## 10. Guarda automática e transporte do trabalho
 
-O trabalho é guardado automaticamente **no navegador** deste computador. Atenção:
+O trabalho é guardado automaticamente **no navegador** deste computador, dois segundos depois da última alteração.
 
-- A guarda fica ligada ao **local** de onde o Oratória foi aberto. Se a pasta for movida ou aberta de outro pendrive, os rascunhos **não** a acompanham.
+**Retomar.** Ao abrir o Apresenta, se houver um trabalho guardado, uma faixa acima do editor mostra o título, a data e o tamanho e oferece **Retomar**. Se você começar outro trabalho sem retomar, o anterior continua guardado à parte e a faixa volta a oferecê-lo na próxima abertura, até que outro rascunho o substitua.
+
+Atenção:
+
+- A guarda fica ligada ao **local** de onde o Apresenta foi aberto. Se a pasta for movida ou aberta de outro pendrive, os rascunhos **não** a acompanham.
 - Para levar o trabalho a outro computador, use o arquivo de projeto `.oratoria.json` *(em preparação)*.
 - Se a Conferência indicar "Guarda apenas nesta sessão", o navegador recusou a guarda: exporte o trabalho antes de fechar a página.
 

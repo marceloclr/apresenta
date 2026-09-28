@@ -1,7 +1,7 @@
-# Oratória — Manual técnico
+# Apresenta — Manual técnico
 
 > Destinado a quem mantém ou estende o sistema. Atualizado a cada etapa, na mesma alteração
-> que muda o código (CLAUDE.md §1). Versão do documento: **0.1.0 · etapa 5**.
+> que muda o código (CLAUDE.md §1). Versão do documento: **0.1.0 · etapa 6**.
 > Convenções obrigatórias: `CLAUDE.md`. Especificação: `docs/especificacao.md`.
 
 ## Sumário
@@ -26,7 +26,7 @@
 
 ## 1. Visão geral e restrições de projeto
 
-O Oratória é uma aplicação web estática, em JavaScript *vanilla*, sem etapa de *build*. A mesma pasta funciona de três modos:
+O Apresenta é uma aplicação web estática, em JavaScript *vanilla*, sem etapa de *build*. A mesma pasta funciona de três modos:
 
 | Modo | Protocolo | Particularidades |
 |---|---|---|
@@ -119,16 +119,18 @@ Ordem no `index.html` (todos com `defer`, que preserva a ordem de execução):
 
 **`js/slides/graficos-runtime.js`** — `O.slides.motorGraficos(raiz, { animar })`, função autossuficiente (§8) que desenha as figuras `figure.o-grafico` com Chart.js, lendo cores, grade, eixos e fonte das variáveis `--s-*` do tema; cria o seletor de tipo (Barras, Linhas, Pizza, Rosca) quando `alternavel`; respeita `prefers-reduced-motion`; sem Chart.js, mostra a tabela de dados. Desenha com `responsive: false` no tamanho de layout do contêiner (a escala por `transform` falsearia a medição responsiva); figuras de tamanho zero ficam pendentes para o próximo `atualizar()`. Devolve `{ atualizar, destruir }`.
 
-**`js/slides/composicao.js`** — monta o `<section class="o-slide">` de cada slide: layout e seu preparo estrutural, fundo por diretiva, classes, rodapé (texto, logotipo, numeração "N / M"; ausente no slide de título) e atributos de acessibilidade (`aria-roledescription="slide"`, `aria-label="Slide N de M"`). API: `O.slides.montarSlide(slide, ctx)`, `montarTodos(resultado, opcoes)`, `resolvedorDoAcervo(acervo)` (imagens: caminho exato e, na falta, nome do arquivo sem distinguir maiúsculas), `renumerar(secoes)` (índices, rótulos acessíveis e "N / M" após paginação ou reordenação) e `hospedeDeMedicao(css, temaId, proporcao)` (palco fora da tela, na resolução de referência, para medir slides com o CSS real).
+**`js/slides/composicao.js`** — monta o `<section class="o-slide">` de cada slide: layout e seu preparo estrutural, fundo por diretiva, classes, rodapé (texto, logotipo, numeração "N / M"; ausente no slide de título) e atributos de acessibilidade (`aria-roledescription="slide"`, `aria-label="Slide N de M"`) e `data-origem` (índice do slide no texto, preservado nas continuações; D32). API: `O.slides.montarSlide(slide, ctx)`, `montarTodos(resultado, opcoes)`, `resolvedorDoAcervo(acervo)` (imagens: caminho exato e, na falta, nome do arquivo sem distinguir maiúsculas), `renumerar(secoes)` (índices, rótulos acessíveis e "N / M" após paginação ou reordenação) e `hospedeDeMedicao(css, temaId, proporcao)` (palco fora da tela, na resolução de referência, para medir slides com o CSS real).
 
 ### 3.3 Conteúdo
 
-**`js/conteudo/interpretador.js`** — ver §4. API: `O.conteudo.interpretar(markdown, opcoes)`, `extrairFrontMatter`, `separarSlides`, `contarSlides`, `lerDiretivas`, `preprocessar`, `lerEspecificacao`, `sanitizar`, `markdownIt()`, `slideDaLinha(resultado, linha)`, `limparCache()`, e o registro `O.conteudo.blocos.registrar(tipo, fn)`.
+**`js/conteudo/interpretador.js`** — ver §4. API: `O.conteudo.interpretar(markdown, opcoes)`, `extrairFrontMatter`, `separarSlides`, `contarSlides`, `lerDiretivas`, `preprocessar`, `lerEspecificacao`, `sanitizar`, `markdownIt()`, `slideDaLinha(resultado, linha)`, `limparCache()`, as edições estruturais puras `definirMeta(texto, chave, valor)` (grava ou remove uma chave do front-matter, criando-o se preciso; D25) e `reordenarSlides(texto, de, para)` → `{ texto, linha }` (D27), e o registro `O.conteudo.blocos.registrar(tipo, fn)`.
 
 **`js/conteudo/tabelas.js`** — fontes de dados e tabelas.
 - `O.conteudo.dados`: `lerCsv(texto)` (PapaParse, separador automático, BOM removido), `obter(referencia, resolverArquivo)` (CSV do acervo ou `arquivo.xlsx#Planilha`), `lista(v)`, `coluna(dados, nome)` (sem acentos nem maiúsculas), `selecionar(dados, { colunas, ordenar, limite })` (ordenação numérica quando ambos os valores são números; senão, alfabética pt-BR).
 - Bloco ```` ```tabela ```` (`fonte`, `colunas`, `ordenar`, `limite`, `classes`).
 - `O.conteudo.tabelas.htmlTabela(sel, classes, fonte)` e `paginar(secoes, palco)`: mede cada slide com tabela no palco de medição; se transbordar, reduz `--o-tabela-fonte` 1 px por vez até `--s-tabela-fonte-minima`; persistindo, divide as linhas em slides de continuação (cabeçalho repetido, "(continuação)" no título, somente título e tabela) e devolve `{ secoes, ocorrencias }` para a Conferência e para o indicador de slides. A tabela alternativa dos gráficos é ignorada.
+
+**`js/conteudo/imagens.js`** (`O.conteudo.imagens`) — preparo de arquivos para o acervo (§5.4 da especificação). `processar(arquivo, { qualidade, ladoMaximo, nome })` → `{ tipo: 'imagem', nome, mime, dataUrl, bytes, bytesOriginais, largura, altura, decisao }`: reduz o lado maior a 1920 px, converte em WebP (sem suporte: JPEG, ou PNG se houver transparência), preserva o original quando a conversão não reduzir o peso e a imagem não precisar ser reduzida, preserva GIF (animação) e sanitiza SVG com o DOMPurify (perfil SVG, sem `script`, `foreignObject` e `style`). `decisao` explica, em português, o que foi feito. Também: `lerPlanilhaCsv(arquivo)`, `sanitizarSvg(texto)`, `ehImagem`, `ehCsv`, `extensaoDoMime`, `suportaWebp`.
 
 **`js/conteudo/graficos.js`** — bloco ```` ```grafico ```` (`tipo`, `fonte` ou `dados` inline em CSV ou lista YAML, `rotulos`, `series`, `ordenar`, `limite`, `alternavel` — padrão sim —, `titulo`, `empilhado`). `O.conteudo.graficos.preparar(spec, ctx)` normaliza a especificação (séries padrão: colunas numéricas) e `html(g)` produz a figura estática: `data-grafico` com o JSON, `<canvas>` com rótulo acessível e tabela alternativa `.o-grafico-dados`.
 
@@ -138,7 +140,15 @@ Ordem no `index.html` (todos com `defer`, que preserva a ordem de execução):
 
 **`js/interface/abas.js`** — abas de trabalho no padrão WAI-ARIA (§10.2). API: `O.ui.abas.iniciar(lista, abaInicial)`, `ativar(id, { focarCampo, focarAba })`, `atual()`.
 
-**`js/interface/app.js`** — orquestração: identidade (nome e versão), tema da interface, validação do título do projeto, preferências salvas, painel "Condições do ambiente" (bibliotecas, fontes, guarda, embutíveis, rede), `O.ui.anunciar(texto)` (região viva) e auditorias em modo de desenvolvimento.
+**`js/interface/editor.js`** (`O.ui.editor`) — editor de Markdown: `<textarea>` com texto transparente sobre uma camada `<pre>` de realce, com as mesmas métricas (fonte, recuo, `pre-wrap`); a largura da barra de rolagem é compensada no `<pre>` e a rolagem é espelhada. Cada linha lógica é um bloco numerado por contador CSS, de modo que a numeração acompanha as quebras de linha. O realce usa só cor e estilo, nunca peso (que mudaria a largura dos caracteres). API: `texto()`, `aplicarTexto(novo)` (altera só o trecho diferente), `substituir(inicio, fim, texto, { selecao, focarEditor })`, `inserirNoCursor(texto, { bloco, cursor })`, `inserirAposLinha(linha, texto)`, `irParaLinha(n, { focar })`, `linhaAtual`, `linhaDe`, `inicioDaLinha`, `fimDaLinha`, `linhas`, `marcarSlide(inicio, fim)`, `focar`, `elemento`. Toda alteração programática passa por `document.execCommand('insertText')`, que preserva o desfazer (Ctrl+Z); sem suporte, recorre a `setRangeText`. Espelha o texto em `projeto.markdown`; carregamentos externos chegam pelo observador. Emite `editor:cursor` `{ linha, coluna }`. Teclado: Tab recua, Shift+Tab desfaz o recuo, Esc seguido de Tab sai do editor.
+
+**`js/interface/previa.js`** (`O.ui.previa`) — pré-visualização e renderização completa (D26). A velocidade rápida (300 ms) interpreta o texto e monta só o slide sob o cursor, escalado por `transform` ao palco, com fragmentos revelados (`.o-expandido`) e gráficos desenhados; a completa (1 s) chama `O.slides.renderizar` e emite `previa:completa`. Mantém o CSS dos slides em `<style id="estilos-slides">`, compartilhado com as miniaturas. API: `interpretacao()`, `completa()`, `slideAtual()`, `irParaSlide(i)`, `secaoDoSlide(origem)`, `contexto()`, `atualizarAgora()`. Eventos: `previa:interpretada`, `previa:slide`, `previa:completa`.
+
+**`js/interface/ingestao.js`** (`O.ui.ingestao`) — entrada de arquivos: arrastar e soltar em toda a janela (inclusive pastas, lidas por `webkitGetAsEntry`), `<input multiple>`, `<input webkitdirectory>` e colagem de imagens no editor. `.md`, `.markdown` e `.txt` substituem o texto (desfazível); imagens e CSV vão ao acervo, preparados por `imagens.js`; documentos (§16) recebem aviso de que a conversão chega na etapa 6-B. Imagens soltas sobre o editor ou coladas são citadas no cursor. Guarda os arquivos originais só na memória da sessão (`original(nome)`), para recompressão. API: `processar(arquivos, { inserirReferencias })`, `escolherArquivos`, `escolherPasta`, `original`, `esquecerOriginal`. Eventos: `ingestao:progresso`, `ingestao:concluida`.
+
+**`js/interface/painel-composicao.js`** (`O.ui.composicao`) — aba Composição: abrir arquivos ou pasta, novo projeto (confirmação em dois toques), exemplos (D22, lidos sob demanda do embutível) e blocos prontos. Os layouts entram como novo slide após o slide sob o cursor (`MODELOS_LAYOUT`); os blocos de conteúdo, no cursor (`BLOCOS`), com modelos que citam o primeiro arquivo adequado do acervo. API: `iniciar`, `novoProjeto`, `abrirExemplo(id)`.
+
+**`js/interface/app.js`** — orquestração: identidade (nome e versão), tema da interface, validação do título do projeto, `O.ui.anunciar(texto)` (região viva), `O.ui.notificar(texto, { gravidade })` (avisos passageiros no canto da tela), `O.ui.doisToques(botao, pergunta, acao, { exigir })` (confirmação sem janela modal), indicadores da barra (§5.3), guarda automática e convite "Retomar" (D29), botões de apresentação (ao encerrar, o editor vai ao slide em que a apresentação parou), preferências salvas, painel "Condições do ambiente" e auditorias em modo de desenvolvimento. Inicializa os demais módulos da interface.
 
 ## 4. Fluxo de dados: do Markdown ao slide
 
@@ -275,7 +285,7 @@ As dependências entre elas são passadas como opções, nunca referenciadas por
 
 ### 9.1 Persistência (`O.persistencia`)
 
-Banco `oratoria`, versão 1, lojas chave-valor criadas de uma vez: `rascunho` (`'atual'`), `preferencias`, `biblioteca`, `pastas`, `segredos`. `iniciar()` abre o banco com tempo-limite de 4 s e faz uma sonda de escrita; em falha, passa ao modo `memoria` (motivo em `motivoMemoria()`). API: `obter`, `gravar`, `remover`, `listar`, `limpar`, `estimativa`, `preferencia`, `definirPreferencia`, `rascunhoDisponivel`, `ativarAutossalvamento` (observa `projeto`, salva após 2 s de inatividade e no `pagehide`).
+Banco `oratoria`, versão 1, lojas chave-valor criadas de uma vez: `rascunho` (`'atual'`, gravado pelo autossalvamento com `atualizadoEm` do momento da guarda; `'anterior'`, cópia do rascunho encontrado na abertura, oferecida pelo convite "Retomar" — D29), `preferencias`, `biblioteca`, `pastas`, `segredos`. `iniciar()` abre o banco com tempo-limite de 4 s e faz uma sonda de escrita; em falha, passa ao modo `memoria` (motivo em `motivoMemoria()`). API: `obter`, `gravar`, `remover`, `listar`, `limpar`, `estimativa`, `preferencia`, `definirPreferencia`, `rascunhoDisponivel`, `ativarAutossalvamento` (observa `projeto`, salva após 2 s de inatividade e no `pagehide`).
 
 ### 9.2 Carregador (`O.carregador`)
 
@@ -344,6 +354,17 @@ As decisões D1 a D13, o PDF direto, a Biblioteca e os ajustes de execução est
 - **D22** Exemplos oferecidos dentro da aplicação por meio do embutível `exemplos.js`.
 - **D23** (revisa D10) Modo apresentador numa janela `about:blank` montada e atualizada diretamente pela janela principal, de mesma origem. Motivo: no editor a página é o `index.html`, não a apresentação, e reabri-la com `#apresentador/N` não reproduziria o deck. A solução funciona igualmente em `file://` e `https`, no editor e no exportado, dispensando `BroadcastChannel` e `postMessage`. Limitação: se a janela principal for recarregada, a do apresentador precisa ser reaberta (**P**).
 - **D24** Cliques sobre a área de um gráfico não avançam o slide (o gráfico é interativo: legendas e dicas); use as teclas ou clique fora dele.
+
+Acréscimos da etapa 6 (interface do editor), com o enunciado completo em `CLAUDE.md` §5:
+
+- **D25** Front-matter como fonte de verdade das escolhas de apresentação; ajustes finos em `projeto.ajustesTema`.
+- **D26** Renderização em duas velocidades (slide sob o cursor em 300 ms; completa em 1 s).
+- **D27** Reordenação por blocos de texto, com título e front-matter fixos.
+- **D28** Indicador de tamanho a partir dos embutíveis reais.
+- **D29** Guarda automática desde a etapa 6, com o rascunho encontrado preservado em `rascunho/anterior`.
+- **D30** Edições programáticas desfazíveis (`execCommand('insertText')`) e confirmação em dois toques.
+- **D31** Nome **Apresenta**; identificadores `Oratoria`/`oratoria` mantidos.
+- **D32** `data-origem` em cada seção montada.
 
 ## 14. Limitações conhecidas
 

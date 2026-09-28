@@ -7,8 +7,8 @@
 
   const c = O.config;
 
-  c.APP_NOME = 'Oratória';
-  c.APP_SLUG = 'oratoria'; // prefixo de arquivos, bancos e caches (sem acento)
+  c.APP_NOME = 'Apresenta';
+  c.APP_SLUG = 'oratoria'; // identificador estável: prefixo de arquivos, bancos e caches (D31)
   c.VERSAO = '0.1.0';
 
   // ── Composição dos slides ────────────────────────────────────────────────
@@ -30,15 +30,22 @@
 
   // ── Interface ────────────────────────────────────────────────────────────
   c.ATRASO_PREVIA_MS = 300;          // debounce da pré-visualização
+  c.ATRASO_RENDERIZACAO_MS = 1000;   // inatividade antes da renderização completa (paginação, D26)
   c.ATRASO_AUTOSSALVAMENTO_MS = 2000; // inatividade antes de salvar
   c.ATRASO_DICA_MS = 350;            // espera antes de exibir a dica ao passar o ponteiro
+  c.ATRASO_CONFIRMACAO_MS = 4000;    // janela da confirmação em dois toques (descartar, remover)
   c.MINUTOS_POR_SLIDE = 1.5;         // fator do tempo estimado (ajustável na aba Tema)
+  c.MINUTOS_POR_SLIDE_LIMITES = [0.25, 10];
+  c.EDITOR_RECUO = '  ';             // inserido pela tecla Tab no editor
 
   // ── Imagens ──────────────────────────────────────────────────────────────
   c.IMAGEM_LADO_MAXIMO = 1920;
   c.IMAGEM_QUALIDADE = 0.85;
+  c.IMAGEM_QUALIDADE_LIMITES = [0.5, 0.95];
   c.IMAGEM_ALERTA_BYTES = 800 * 1024; // acima disto, aviso na Conferência
-  c.TIPOS_ACEITOS = ['.md', '.png', '.jpg', '.jpeg', '.webp', '.gif', '.svg', '.csv'];
+  c.TEXTO_ALTERNATIVO_MAXIMO = 250;
+  c.TIPOS_ACEITOS = ['.md', '.markdown', '.txt', '.png', '.jpg', '.jpeg', '.webp', '.gif', '.svg', '.csv'];
+  c.TIPOS_DOCUMENTO = ['.pdf', '.doc', '.docx', '.odt', '.xls', '.xlsx']; // importação na etapa 6-B (§16)
 
   // ── Exportação em PDF (direta) ───────────────────────────────────────────
   c.PDF_RESOLUCOES = { '1x': 1, '1,5x': 1.5 };

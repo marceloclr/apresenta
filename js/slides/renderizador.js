@@ -74,7 +74,8 @@
       camada.remove();
       ativa = null;
       if (retornoFoco && retornoFoco.focus) retornoFoco.focus();
-      O.estado.emitir('apresentacao:encerrada', { indice: motor.atual() });
+      const secao = r.secoes[motor.atual()];
+      O.estado.emitir('apresentacao:encerrada', { indice: motor.atual(), origem: secao ? Number(secao.dataset.origem) : null });
     }
     ativa = { motor, encerrar, renderizacao: r };
     O.estado.emitir('apresentacao:iniciada', { total: motor.total });

@@ -135,9 +135,13 @@
   P.definirPreferencia = (chave, valor) => P.gravar('preferencias', chave, valor).catch((e) => console.warn(e));
 
   // ── Rascunho e autossalvamento ──────────────────────────────────────────
-  /** Metadados do último rascunho, para o convite "Retomar último trabalho". */
-  P.rascunhoDisponivel = async function () {
-    const r = await P.obter('rascunho', 'atual').catch(() => undefined);
+  /**
+   * Metadados de um rascunho, para o convite "Retomar último trabalho".
+   * Chaves: 'atual' (autossalvamento) e 'anterior' (o rascunho encontrado na abertura, guardado
+   * à parte para que o autossalvamento da nova sessão não o sobrescreva antes da decisão).
+   */
+  P.rascunhoDisponivel = async function (chave = 'atual') {
+    const r = await P.obter('rascunho', chave).catch(() => undefined);
     if (!r || !r.markdown) return null;
     return { atualizadoEm: r.atualizadoEm, caracteres: r.markdown.length, imagens: Object.keys(r.acervo || {}).length, projeto: r };
   };
@@ -148,7 +152,9 @@
     if (cancelarObservacao) return;
     const salvar = O.util.debounce(async () => {
       try {
-        await P.gravar('rascunho', 'atual', O.estado.instantaneo('projeto'));
+        const projeto = O.estado.instantaneo('projeto');
+        projeto.atualizadoEm = Date.now(); // momento da guarda (projetos carregados chegam sem data)
+        await P.gravar('rascunho', 'atual', projeto);
         O.estado.emitir('persistencia:salvo', { quando: Date.now(), modo });
       } catch (e) {
         O.estado.emitir('persistencia:falha', { erro: e });

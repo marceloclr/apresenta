@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="dark light">
   <meta name="description" content="Composição de apresentações em HTML a partir de Markdown e imagens.">
-  <title>Oratória</title>
+  <title>Apresenta</title>
 
   <link rel="stylesheet" href="css/fontes.css">
   <link rel="stylesheet" href="css/app.css">
@@ -62,12 +62,17 @@
   <script defer src="js/conteudo/interpretador.js"></script>
   <script defer src="js/conteudo/tabelas.js"></script>
   <script defer src="js/conteudo/graficos.js"></script>
+  <script defer src="js/conteudo/imagens.js"></script>
   <!-- ═══ 6. Exportação ═══ -->
   <!-- ═══ 7. Serviços ═══ -->
 
   <!-- ═══ 8. Interface (app.js por último) ═══ -->
   <script defer src="js/interface/dicas.js"></script>
   <script defer src="js/interface/abas.js"></script>
+  <script defer src="js/interface/editor.js"></script>
+  <script defer src="js/interface/previa.js"></script>
+  <script defer src="js/interface/ingestao.js"></script>
+  <script defer src="js/interface/painel-composicao.js"></script>
   <script defer src="js/interface/app.js"></script>
 </head>
 <body>
@@ -82,7 +87,7 @@
           <path d="M7 9.5h9M7 13h6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
           <path d="M13 18.5v3.5M9 22h8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
         </svg>
-        <span class="marca-nome" data-app-nome>Oratória</span>
+        <span class="marca-nome" data-app-nome>Apresenta</span>
         <span class="marca-versao" data-app-versao
               data-dica="Versão desta cópia da aplicação. Informe-a ao relatar qualquer problema."></span>
       </div>
@@ -123,6 +128,12 @@
       </div>
 
       <div class="barra-acoes">
+        <button type="button" class="botao botao-primario" id="botao-apresentar"
+                data-dica="Apresenta em tela cheia a partir do slide sob o cursor. Esc encerra e devolve o editor ao slide em que a apresentação parou; P abre o modo apresentador."
+                data-dica-posicao="abaixo">
+          <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M5 3.5v9l7-4.5z" fill="currentColor"/></svg>
+          Apresentar
+        </button>
         <button type="button" class="botao botao-discreto botao-icone" id="botao-tema-interface"
                 data-dica="Alterna a interface do editor entre escura e clara. Não altera o tema dos slides; a escolha fica guardada neste navegador."
                 data-dica-posicao="abaixo">
@@ -162,8 +173,32 @@
               <p>Origem do texto e blocos prontos para inserir.</p>
             </header>
             <div class="cartao" data-cor="composicao">
-              <h3>Em preparação</h3>
-              <p class="cartao-nota">Abertura de arquivos .md, colagem, arraste e inserção de layouts, tabelas e gráficos.</p>
+              <h3>Origem do texto</h3>
+              <div class="grupo-botoes">
+                <button type="button" class="botao" id="botao-abrir-arquivos"
+                        data-dica="Abre arquivos do computador: um texto .md substitui o do editor (Ctrl+Z desfaz); imagens e planilhas CSV vão para o acervo. Nada é enviado pela internet.">Abrir arquivos…</button>
+                <button type="button" class="botao" id="botao-abrir-pasta"
+                        data-dica="Abre uma pasta inteira: o primeiro .md vira o texto e as imagens e planilhas vão para o acervo.">Abrir pasta…</button>
+                <button type="button" class="botao botao-discreto" id="botao-novo-projeto"
+                        data-dica="Começa um projeto em branco, com cabeçalho mínimo. Descarta o texto e o acervo atuais: pede confirmação com um segundo toque.">Novo projeto</button>
+              </div>
+              <p class="cartao-nota">Também é possível <strong>arrastar</strong> arquivos ou pastas para qualquer ponto da janela e <strong>colar</strong> imagens no editor (Ctrl+V).</p>
+              <input type="file" id="entrada-arquivos" multiple hidden data-dica-dispensada
+                     accept=".md,.markdown,.txt,.png,.jpg,.jpeg,.webp,.gif,.svg,.csv,.pdf,.doc,.docx,.odt,.xls,.xlsx">
+              <input type="file" id="entrada-pasta" webkitdirectory multiple hidden data-dica-dispensada>
+            </div>
+            <div class="cartao" data-cor="composicao">
+              <h3>Novo slide com layout</h3>
+              <div class="grade-botoes" id="lista-layouts"></div>
+            </div>
+            <div class="cartao" data-cor="composicao">
+              <h3>Bloco no cursor</h3>
+              <div class="grade-botoes" id="lista-blocos"></div>
+            </div>
+            <div class="cartao" data-cor="composicao">
+              <h3>Exemplos prontos</h3>
+              <p class="cartao-nota">Um deck completo por tema, com imagens, planilhas e gráficos, para servir de modelo. Dados fictícios.</p>
+              <div class="lista-exemplos" id="lista-exemplos"></div>
             </div>
           </section>
 
@@ -220,8 +255,18 @@
               <p>Tela cheia, modo apresentador e arquivos finais.</p>
             </header>
             <div class="cartao" data-cor="apresentar">
-              <h3>Em preparação</h3>
-              <p class="cartao-nota">HTML autocontido, PDF direto, projeto .oratoria.json e Markdown.</p>
+              <h3>Apresentar</h3>
+              <div class="grupo-botoes">
+                <button type="button" class="botao botao-primario" id="botao-apresentar-inicio"
+                        data-dica="Apresenta em tela cheia desde o primeiro slide. Esc encerra.">Do início</button>
+                <button type="button" class="botao" id="botao-apresentar-atual"
+                        data-dica="Apresenta em tela cheia a partir do slide sob o cursor do editor. Esc encerra.">Do slide atual</button>
+              </div>
+              <p class="cartao-nota">Durante a apresentação: <kbd>→</kbd> avança, <kbd>←</kbd> volta, <kbd>O</kbd> visão geral, <kbd>P</kbd> modo apresentador (outra janela, com notas e cronômetro), <kbd>B</kbd> escurece, <kbd>F</kbd> tela cheia, <kbd>Esc</kbd> encerra.</p>
+            </div>
+            <div class="cartao" data-cor="apresentar">
+              <h3>Exportar</h3>
+              <p class="cartao-nota">HTML autocontido, PDF, projeto .oratoria.json e Markdown chegam na próxima versão.</p>
             </div>
           </section>
 
@@ -250,22 +295,53 @@
       </aside>
 
       <section class="zona" id="zona-editor" tabindex="-1" aria-labelledby="titulo-editor" data-cor="composicao">
-        <div class="zona-cabecalho"><h2 id="titulo-editor">Texto</h2></div>
-        <div class="zona-corpo">
-          <div class="vazio">
-            <strong>O texto da apresentação ficará aqui</strong>
-            <p>Markdown com numeração de linhas e realce, sincronizado com a pré-visualização.</p>
+        <div class="zona-cabecalho">
+          <h2 id="titulo-editor">Texto</h2>
+          <span class="zona-info" id="editor-posicao"
+                data-dica="Posição do cursor no texto. O slide em que o cursor está aparece na pré-visualização e fica marcado na margem numerada.">Linha 1, coluna 1</span>
+          <span class="zona-espaco"></span>
+          <button type="button" class="botao botao-discreto botao-icone" id="botao-ajuda-editor"
+                  data-dica="Atalhos do editor: Tab recua duas posições e Shift+Tab desfaz o recuo; Esc seguido de Tab leva o foco para fora do editor; Ctrl+Z desfaz, inclusive inserções de blocos e reordenação de slides; Ctrl+V cola imagens direto no acervo."
+                  data-dica-posicao="abaixo" aria-label="Atalhos do editor">?</button>
+        </div>
+        <div class="zona-corpo editor">
+          <div class="aviso-faixa faixa-retomar" id="faixa-retomar" hidden>
+            <span data-texto></span>
+            <span class="zona-espaco"></span>
+            <button type="button" class="botao botao-primario" id="botao-retomar"
+                    data-dica="Substitui o texto atual pelo trabalho guardado neste navegador, com o acervo e os ajustes de tema.">Retomar</button>
+            <button type="button" class="botao botao-discreto" id="botao-dispensar-retomada"
+                    data-dica="Oculta o convite. O trabalho guardado continua disponível até ser sobrescrito por outro rascunho.">Agora não</button>
           </div>
+          <div class="editor-quadro" id="editor-quadro">
+            <pre class="editor-realce" id="editor-realce" aria-hidden="true"></pre>
+            <textarea class="editor-texto" id="editor-texto" spellcheck="false" autocapitalize="off" autocomplete="off"
+                      aria-labelledby="titulo-editor" aria-describedby="editor-instrucoes" data-dica-dispensada
+                      placeholder="Escreva aqui em Markdown, arraste um arquivo .md para a janela ou abra um exemplo na aba Composição."></textarea>
+          </div>
+          <p class="sr-only" id="editor-instrucoes">Texto da apresentação em Markdown. Separe os slides com uma linha contendo apenas três hífens. Tab recua; Esc seguido de Tab sai do editor.</p>
         </div>
       </section>
 
       <section class="zona" id="zona-previa" aria-labelledby="titulo-previa" data-cor="apresentar">
-        <div class="zona-cabecalho"><h2 id="titulo-previa">Pré-visualização</h2></div>
-        <div class="zona-corpo">
-          <div class="vazio">
+        <div class="zona-cabecalho">
+          <h2 id="titulo-previa">Pré-visualização</h2>
+          <span class="zona-info" id="previa-rotulo" aria-live="polite"
+                data-dica="Slide sob o cursor do editor, seu número e seu layout. Fragmentos aparecem todos revelados; tabelas longas aparecem antes da divisão em continuações.">Nenhum slide</span>
+          <span class="zona-espaco"></span>
+          <button type="button" class="botao botao-discreto botao-icone" id="botao-previa-anterior" aria-label="Slide anterior"
+                  data-dica="Leva o cursor do editor ao slide anterior." data-dica-posicao="abaixo">‹</button>
+          <button type="button" class="botao botao-discreto botao-icone" id="botao-previa-proximo" aria-label="Próximo slide"
+                  data-dica="Leva o cursor do editor ao slide seguinte." data-dica-posicao="abaixo">›</button>
+          <button type="button" class="botao botao-discreto" id="botao-previa-apresentar"
+                  data-dica="Apresenta em tela cheia a partir deste slide. Esc encerra." data-dica-posicao="abaixo">Apresentar daqui</button>
+        </div>
+        <div class="zona-corpo previa-palco" id="previa-palco">
+          <div class="vazio" id="previa-vazio">
             <strong>O slide sob o cursor aparecerá aqui</strong>
-            <p>Atualização ao vivo, na escala do espaço disponível.</p>
+            <p>Escreva no editor, abra um arquivo ou escolha um exemplo na aba Composição.</p>
           </div>
+          <div class="previa-raiz" id="previa-raiz" hidden></div>
         </div>
       </section>
 
@@ -277,6 +353,13 @@
   </div>
 
   <div class="sr-only" id="anuncios" aria-live="polite" aria-atomic="true"></div>
+  <div class="avisos-tela" id="avisos-tela"></div>
+  <div class="camada-soltar" id="camada-soltar" hidden>
+    <div class="camada-soltar-quadro">
+      <strong>Solte para acrescentar</strong>
+      <p>Textos .md abrem no editor; imagens e planilhas CSV vão para o acervo. Soltas sobre o editor, as imagens também são citadas no cursor.</p>
+    </div>
+  </div>
 
   <noscript>
     <p style="padding:24px;font:16px sans-serif">Esta aplicação precisa de JavaScript habilitado no navegador.</p>

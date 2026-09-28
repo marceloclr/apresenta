@@ -26,6 +26,9 @@
     secao.className = ['o-slide', ...(slide.classes || [])].join(' ');
     secao.dataset.layout = layout.id;
     secao.dataset.indice = String(slide.indice);
+    // Índice do slide no texto: sobrevive à paginação (as continuações são clones) e à
+    // renumeração, e liga miniaturas e pré-visualização à posição no editor.
+    secao.dataset.origem = String(slide.indice);
     if (slide.transicao) secao.dataset.transicao = slide.transicao;
     secao.setAttribute('aria-roledescription', 'slide');
     secao.setAttribute('aria-label', `Slide ${slide.indice + 1} de ${ctx.total || slide.indice + 1}`);
