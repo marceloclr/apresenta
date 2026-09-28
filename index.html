@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="pt-BR" data-interface="escuro">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark light">
+  <meta name="description" content="Composição de apresentações em HTML a partir de Markdown e imagens.">
+  <title>Oratória</title>
+
+  <link rel="stylesheet" href="css/fontes.css">
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/componentes.css">
+
+  <!-- Aplica o tema da interface antes da primeira pintura (preferência do sistema;
+       a escolha salva é aplicada por app.js logo em seguida). -->
+  <script>
+    (function () {
+      try {
+        if (window.matchMedia && matchMedia('(prefers-color-scheme: light)').matches) {
+          document.documentElement.setAttribute('data-interface', 'claro');
+        }
+      } catch (e) { /* navegador sem matchMedia */ }
+    })();
+  </script>
+
+  <!-- ═══ 1. Bibliotecas (vendor/) ═══ -->
+  <script defer src="vendor/markdown-it.min.js"></script>
+  <script defer src="vendor/markdown-it-attrs.iife.js"></script>
+  <script defer src="vendor/markdown-it-container.min.js"></script>
+  <script defer src="vendor/purify.min.js"></script>
+  <script defer src="vendor/js-yaml.min.js"></script>
+  <script defer src="vendor/papaparse.min.js"></script>
+  <script defer src="vendor/chart.umd.min.js"></script>
+  <script defer src="vendor/highlight.min.js"></script>
+  <script defer src="vendor/qrcode.js"></script>
+
+  <!-- ═══ 2. Núcleo (namespace primeiro, config em seguida) ═══ -->
+  <script defer src="js/nucleo/namespace.js"></script>
+  <script defer src="js/nucleo/config.js"></script>
+  <script defer src="js/nucleo/rotulos.js"></script>
+  <script defer src="js/nucleo/utilidades.js"></script>
+  <script defer src="js/nucleo/estado.js"></script>
+  <script defer src="js/nucleo/persistencia.js"></script>
+  <script defer src="js/nucleo/carregador.js"></script>
+
+  <!-- ═══ 3. Slides (temas-css.js antes de temas/*) ═══ -->
+  <script defer src="js/slides/estilos-base.js"></script>
+  <script defer src="js/slides/temas-css.js"></script>
+  <script defer src="js/slides/composicao.js"></script>
+  <script defer src="js/slides/graficos-runtime.js"></script>
+  <script defer src="js/slides/motor.js"></script>
+  <script defer src="js/slides/apresentador.js"></script>
+  <script defer src="js/slides/renderizador.js"></script>
+
+  <!-- ═══ 4. Temas (um tema novo = um arquivo + uma linha) ═══ -->
+  <script defer src="temas/aurora.js"></script>
+  <script defer src="temas/marfim.js"></script>
+  <script defer src="temas/grafite.js"></script>
+  <script defer src="temas/nanquim.js"></script>
+
+  <!-- ═══ 5. Conteúdo ═══ -->
+  <script defer src="js/conteudo/interpretador.js"></script>
+  <script defer src="js/conteudo/tabelas.js"></script>
+  <script defer src="js/conteudo/graficos.js"></script>
+  <!-- ═══ 6. Exportação ═══ -->
+  <!-- ═══ 7. Serviços ═══ -->
+
+  <!-- ═══ 8. Interface (app.js por último) ═══ -->
+  <script defer src="js/interface/dicas.js"></script>
+  <script defer src="js/interface/abas.js"></script>
+  <script defer src="js/interface/app.js"></script>
+</head>
+<body>
+  <a class="salto" href="#zona-editor">Ir para o editor</a>
+
+  <div class="app">
+    <!-- ═══════════════════════════ Barra superior ═══════════════════════════ -->
+    <header class="barra">
+      <div class="marca">
+        <svg class="marca-simbolo" viewBox="0 0 26 26" aria-hidden="true" focusable="false">
+          <rect x="2.5" y="4.5" width="21" height="14" rx="3" fill="none" stroke="currentColor" stroke-width="1.6"/>
+          <path d="M7 9.5h9M7 13h6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          <path d="M13 18.5v3.5M9 22h8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+        <span class="marca-nome" data-app-nome>Oratória</span>
+        <span class="marca-versao" data-app-versao
+              data-dica="Versão desta cópia da aplicação. Informe-a ao relatar qualquer problema."></span>
+      </div>
+
+      <div class="barra-projeto">
+        <label class="sr-only" for="campo-titulo-projeto">Título do projeto</label>
+        <input id="campo-titulo-projeto" class="entrada entrada-titulo" type="text"
+               style="--largura: 30ch" maxlength="120" autocomplete="off" spellcheck="true"
+               placeholder="Apresentação sem título"
+               data-dica="Título do projeto. Serve de nome ao arquivo exportado, normalizado sem acentos e seguido da data. Até 120 caracteres; não aceita / \ : * ? &quot; &lt; &gt; |."
+               data-dica-posicao="abaixo">
+      </div>
+
+      <div class="barra-espaco"></div>
+
+      <div class="barra-indicadores" aria-label="Indicadores do projeto">
+        <span class="indicador" id="ind-slides" data-cor="composicao"
+              data-dica-titulo="Número de slides"
+              data-dica="Quantidade de slides que a apresentação terá."
+              data-dica-formula="separadores --- fora de blocos de código + 1&#10;+ slides criados pela paginação de tabelas longas"
+              data-dica-posicao="abaixo">
+          <span class="indicador-rotulo">Slides</span><span class="indicador-valor" data-valor>0</span>
+        </span>
+        <span class="indicador" id="ind-tempo" data-cor="tema"
+              data-dica-titulo="Tempo estimado de exposição"
+              data-dica="Estimativa de duração da fala. O fator por slide é ajustável na aba Tema."
+              data-dica-formula="slides × 1,5 min"
+              data-dica-posicao="abaixo">
+          <span class="indicador-rotulo">Duração</span><span class="indicador-valor" data-valor>0 min</span>
+        </span>
+        <span class="indicador" id="ind-tamanho" data-cor="apresentar"
+              data-dica-titulo="Tamanho estimado do arquivo exportado"
+              data-dica="Peso aproximado do HTML autocontido. A decomposição de cada parcela aparece aqui quando houver conteúdo."
+              data-dica-formula="Σ(bytes das imagens comprimidas) × 4/3&#10;+ motor dos slides + tema + fontes usadas&#10;+ Chart.js (se houver gráfico)"
+              data-dica-posicao="abaixo">
+          <span class="indicador-rotulo">Arquivo</span><span class="indicador-valor" data-valor>—</span>
+        </span>
+      </div>
+
+      <div class="barra-acoes">
+        <button type="button" class="botao botao-discreto botao-icone" id="botao-tema-interface"
+                data-dica="Alterna a interface do editor entre escura e clara. Não altera o tema dos slides; a escolha fica guardada neste navegador."
+                data-dica-posicao="abaixo">
+          <svg class="icone-lua" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M13.5 10.2A5.6 5.6 0 0 1 5.8 2.5a5.6 5.6 0 1 0 7.7 7.7Z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+          <svg class="icone-sol" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="3" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M8 1.5v1.6M8 12.9v1.6M1.5 8h1.6M12.9 8h1.6M3.4 3.4l1.1 1.1M11.5 11.5l1.1 1.1M3.4 12.6l1.1-1.1M11.5 4.5l1.1-1.1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+          <span class="sr-only">Alternar tema da interface</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- ═══════════════════════════ Área de trabalho ═══════════════════════════ -->
+    <main class="area">
+      <aside class="lateral" aria-label="Áreas de trabalho">
+        <div class="abas" role="tablist" aria-orientation="vertical" aria-label="Áreas de trabalho">
+          <button type="button" class="aba" role="tab" id="aba-composicao" data-aba="composicao" aria-controls="painel-composicao"
+                  data-dica="Abrir, colar ou arrastar o texto em Markdown e inserir blocos prontos." data-dica-posicao="direita"><span class="aba-rotulo"></span></button>
+          <button type="button" class="aba" role="tab" id="aba-acervo" data-aba="acervo" aria-controls="painel-acervo"
+                  data-dica="Imagens e planilhas carregadas: miniaturas, peso antes e depois da compressão, texto alternativo." data-dica-posicao="direita"><span class="aba-rotulo"></span></button>
+          <button type="button" class="aba" role="tab" id="aba-tabelas" data-aba="tabelas" aria-controls="painel-tabelas"
+                  data-dica="Editar tabelas, importar CSV, aplicar classes e converter em gráfico." data-dica-posicao="direita"><span class="aba-rotulo"></span></button>
+          <button type="button" class="aba" role="tab" id="aba-tema" data-aba="tema" aria-controls="painel-tema"
+                  data-dica="Escolher o modelo visual dos slides e ajustar acento, tipografia, grade de fundo, rodapé e logotipo." data-dica-posicao="direita"><span class="aba-rotulo"></span></button>
+          <button type="button" class="aba" role="tab" id="aba-conferencia" data-aba="conferencia" aria-controls="painel-conferencia"
+                  data-dica="Advertências de acessibilidade, contraste e peso, condições do ambiente e serviços externos." data-dica-posicao="direita"><span class="aba-rotulo"></span></button>
+          <button type="button" class="aba" role="tab" id="aba-apresentar" data-aba="apresentar" aria-controls="painel-apresentar"
+                  data-dica="Tela cheia, modo apresentador e exportação em HTML, PDF, projeto e Markdown." data-dica-posicao="direita"><span class="aba-rotulo"></span></button>
+          <button type="button" class="aba" role="tab" id="aba-biblioteca" data-aba="biblioteca" aria-controls="painel-biblioteca"
+                  data-dica="Apresentações guardadas no navegador, numa pasta do disco ou publicadas no GitHub." data-dica-posicao="direita"><span class="aba-rotulo"></span></button>
+          <button type="button" class="aba" role="tab" id="aba-guia" data-aba="guia" aria-controls="painel-guia"
+                  data-dica="Referência da sintaxe, com exemplos prontos para copiar." data-dica-posicao="direita"><span class="aba-rotulo"></span></button>
+        </div>
+
+        <div class="paineis">
+          <section class="painel" role="tabpanel" id="painel-composicao" data-aba="composicao" hidden>
+            <header class="painel-cabecalho">
+              <h2>Composição</h2>
+              <p>Origem do texto e blocos prontos para inserir.</p>
+            </header>
+            <div class="cartao" data-cor="composicao">
+              <h3>Em preparação</h3>
+              <p class="cartao-nota">Abertura de arquivos .md, colagem, arraste e inserção de layouts, tabelas e gráficos.</p>
+            </div>
+          </section>
+
+          <section class="painel" role="tabpanel" id="painel-acervo" data-aba="acervo" hidden>
+            <header class="painel-cabecalho">
+              <h2>Acervo de imagens</h2>
+              <p>Imagens e planilhas disponíveis para a apresentação.</p>
+            </header>
+            <div class="cartao" data-cor="acervo">
+              <h3>Em preparação</h3>
+              <p class="cartao-nota">Miniaturas, compressão, texto alternativo e remoção.</p>
+            </div>
+          </section>
+
+          <section class="painel" role="tabpanel" id="painel-tabelas" data-aba="tabelas" hidden>
+            <header class="painel-cabecalho">
+              <h2>Tabelas</h2>
+              <p>Edição tabular, importação de CSV e conversão em gráfico.</p>
+            </header>
+            <div class="cartao" data-cor="tabelas">
+              <h3>Em preparação</h3>
+              <p class="cartao-nota">Editor de células, classes de estilo e alternância para gráfico.</p>
+            </div>
+          </section>
+
+          <section class="painel" role="tabpanel" id="painel-tema" data-aba="tema" hidden>
+            <header class="painel-cabecalho">
+              <h2>Tema</h2>
+              <p>Modelo visual dos slides e ajustes finos.</p>
+            </header>
+            <div class="cartao" data-cor="tema">
+              <h3>Em preparação</h3>
+              <p class="cartao-nota">Aurora, Marfim, Grafite e Nanquim, com comparação lado a lado.</p>
+            </div>
+          </section>
+
+          <section class="painel" role="tabpanel" id="painel-conferencia" data-aba="conferencia" hidden>
+            <header class="painel-cabecalho">
+              <h2>Conferência</h2>
+              <p>O que merece atenção antes de apresentar ou exportar.</p>
+            </header>
+            <div class="cartao" data-cor="conferencia" id="cartao-ambiente">
+              <h3>Condições do ambiente
+                <button type="button" class="botao botao-discreto" id="botao-reconferir-ambiente"
+                        data-dica="Refaz a conferência do ambiente: bibliotecas, fontes, guarda automática e conexão. Nada é alterado no projeto.">Conferir novamente</button>
+              </h3>
+              <ul class="verificacoes" id="lista-ambiente" aria-live="polite"></ul>
+            </div>
+          </section>
+
+          <section class="painel" role="tabpanel" id="painel-apresentar" data-aba="apresentar" hidden>
+            <header class="painel-cabecalho">
+              <h2>Apresentar e exportar</h2>
+              <p>Tela cheia, modo apresentador e arquivos finais.</p>
+            </header>
+            <div class="cartao" data-cor="apresentar">
+              <h3>Em preparação</h3>
+              <p class="cartao-nota">HTML autocontido, PDF direto, projeto .oratoria.json e Markdown.</p>
+            </div>
+          </section>
+
+          <section class="painel" role="tabpanel" id="painel-biblioteca" data-aba="biblioteca" hidden>
+            <header class="painel-cabecalho">
+              <h2>Biblioteca</h2>
+              <p>Apresentações guardadas e publicadas.</p>
+            </header>
+            <div class="cartao" data-cor="biblioteca">
+              <h3>Em preparação</h3>
+              <p class="cartao-nota">Navegador, pasta local e publicação no GitHub.</p>
+            </div>
+          </section>
+
+          <section class="painel" role="tabpanel" id="painel-guia" data-aba="guia" hidden>
+            <header class="painel-cabecalho">
+              <h2>Guia</h2>
+              <p>Referência da sintaxe estendida.</p>
+            </header>
+            <div class="cartao" data-cor="guia">
+              <h3>Em preparação</h3>
+              <p class="cartao-nota">Front-matter, diretivas, contêineres, tabelas, gráficos e atalhos.</p>
+            </div>
+          </section>
+        </div>
+      </aside>
+
+      <section class="zona" id="zona-editor" tabindex="-1" aria-labelledby="titulo-editor" data-cor="composicao">
+        <div class="zona-cabecalho"><h2 id="titulo-editor">Texto</h2></div>
+        <div class="zona-corpo">
+          <div class="vazio">
+            <strong>O texto da apresentação ficará aqui</strong>
+            <p>Markdown com numeração de linhas e realce, sincronizado com a pré-visualização.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="zona" id="zona-previa" aria-labelledby="titulo-previa" data-cor="apresentar">
+        <div class="zona-cabecalho"><h2 id="titulo-previa">Pré-visualização</h2></div>
+        <div class="zona-corpo">
+          <div class="vazio">
+            <strong>O slide sob o cursor aparecerá aqui</strong>
+            <p>Atualização ao vivo, na escala do espaço disponível.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="zona miniaturas" id="zona-miniaturas" aria-labelledby="titulo-miniaturas" data-cor="composicao">
+        <div class="zona-cabecalho"><h2 id="titulo-miniaturas">Sequência de slides</h2></div>
+        <div class="zona-corpo"></div>
+      </section>
+    </main>
+  </div>
+
+  <div class="sr-only" id="anuncios" aria-live="polite" aria-atomic="true"></div>
+
+  <noscript>
+    <p style="padding:24px;font:16px sans-serif">Esta aplicação precisa de JavaScript habilitado no navegador.</p>
+  </noscript>
+</body>
+</html>

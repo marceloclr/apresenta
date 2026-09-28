@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 900" width="900" height="900">
+  <rect width="900" height="900" fill="#11161d"/>
+  <g fill="none" stroke="#2a323d" stroke-width="2"><rect x="60" y="60" width="780" height="360" rx="24"/><rect x="60" y="460" width="370" height="380" rx="24"/><rect x="470" y="460" width="370" height="380" rx="24"/></g>
+  <polyline points="100,360 180,300 260,320 340,240 420,260 500,180 580,210 660,130 800,150" fill="none" stroke="#6a9fcc" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <polyline points="100,380 180,350 260,360 340,310 420,330 500,280 580,300 660,250 800,270" fill="none" stroke="#5db87a" stroke-width="6" stroke-linecap="round" stroke-dasharray="4 14"/>
+  <circle cx="245" cy="650" r="120" fill="none" stroke="#232a35" stroke-width="44"/>
+  <circle cx="245" cy="650" r="120" fill="none" stroke="#e8993a" stroke-width="44" stroke-dasharray="520 754" transform="rotate(-90 245 650)"/>
+  <g fill="#6a9fcc"><rect x="520" y="700" width="46" height="100" rx="8"/><rect x="590" y="620" width="46" height="180" rx="8"/><rect x="660" y="660" width="46" height="140" rx="8"/><rect x="730" y="560" width="46" height="240" rx="8" fill="#b86b52"/></g>
+</svg>

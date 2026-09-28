@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" font-family="IBM Plex Sans, sans-serif">
+  <rect width="800" height="800" fill="#eef2f8"/>
+  <circle cx="400" cy="400" r="250" fill="none" stroke="#9fb6cf" stroke-width="18" stroke-dasharray="6 18"/>
+  <g font-size="34" font-weight="600" text-anchor="middle" fill="#ffffff">
+    <circle cx="400" cy="150" r="92" fill="#2f5f8f"/><text x="400" y="162">PPA</text>
+    <circle cx="638" cy="323" r="92" fill="#4b607c"/><text x="638" y="335">LDO</text>
+    <circle cx="547" cy="602" r="92" fill="#5d8a6a"/><text x="547" y="614">LOA</text>
+    <circle cx="253" cy="602" r="92" fill="#b0763a"/><text x="253" y="604" font-size="26">Execu-</text><text x="253" y="634" font-size="26">ção</text>
+    <circle cx="162" cy="323" r="92" fill="#8a5a8c"/><text x="162" y="325" font-size="26">Contro-</text><text x="162" y="355" font-size="26">le</text>
+  </g>
+</svg>
