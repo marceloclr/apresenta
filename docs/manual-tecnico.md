@@ -87,7 +87,7 @@ Ordem no `index.html` (todos com `defer`, que preserva a ordem de execução):
 
 **`js/nucleo/namespace.js`** — cria `window.Oratoria` e seus subespaços; idempotente (preserva o objeto se já existir, como na edição portátil).
 
-**`js/nucleo/config.js`** — `APP_NOME`, `APP_SLUG`, `VERSAO` (conferida contra `package.json`), proporções e margens de referência, pisos tipográficos, atrasos (prévia 300 ms, autossalvamento 2 s, dica 350 ms), fator de minutos por slide, parâmetros de imagem e PDF, nome do banco, módulos de rede com versões fixadas (`MODULOS_REDE`), URL da sonda de rede, caminhos dos embutíveis e `DESENVOLVIMENTO` (ativo com `?dev` ou em `localhost`).
+**`js/nucleo/config.js`** — `APP_NOME`, `APP_SLUG`, `VERSAO` (conferida contra `package.json`), proporções e margens de referência, pisos tipográficos, atrasos (prévia 300 ms, autossalvamento 2 s, dica 350 ms), fator de minutos por slide, parâmetros de imagem e PDF, nome do banco, módulos de rede com versões fixadas (`MODULOS_REDE`), URL da sonda de rede, caminhos dos embutíveis, `EDICAO` (`'completa'`; `'portatil'` na edição de arquivo único, redefinida pelo empacotador) e `DESENVOLVIMENTO` (ativo com `?dev` ou em `localhost`).
 
 **`js/nucleo/rotulos.js`** — mapas `ROTULO_LAYOUT`, `ROTULO_ABA`, `ROTULO_AMBIENTE`, `ROTULO_TRANSICAO`, `ROTULO_GRAFICO`, `ROTULO_PROPORCAO`, `ROTULO_TEMA_INTERFACE`, `ROTULO_GRAVIDADE`, `ROTULO_PERSISTENCIA`; `rotulo(mapa, chave)` e atalhos (`rotuloLayout`, `rotuloAba`…). Regra: muda-se o rótulo, nunca a chave.
 
@@ -180,7 +180,7 @@ Ordem no `index.html` (todos com `defer`, que preserva a ordem de execução):
 
 **`js/interface/painel-composicao.js`** (`O.ui.composicao`) — aba Composição: abrir arquivos ou pasta, novo projeto (confirmação em dois toques), exemplos (D22, lidos sob demanda do embutível) e blocos prontos. Os layouts entram como novo slide após o slide sob o cursor (`MODELOS_LAYOUT`); os blocos de conteúdo, no cursor (`BLOCOS`), com modelos que citam o primeiro arquivo adequado do acervo. API: `iniciar`, `novoProjeto`, `abrirExemplo(id)`.
 
-**`js/interface/app.js`** — orquestração: identidade (nome e versão), tema da interface, validação do título do projeto, `O.ui.anunciar(texto)` (região viva), `O.ui.notificar(texto, { gravidade })` (avisos passageiros no canto da tela), `O.ui.doisToques(botao, pergunta, acao, { exigir })` (confirmação sem janela modal), indicadores da barra (§5.3), guarda automática e convite "Retomar" (D29), preferências salvas, painel "Condições do ambiente" e auditorias em modo de desenvolvimento. Inicializa os demais módulos da interface.
+**`js/interface/app.js`** — orquestração: identidade (nome e versão), tema da interface, validação do título do projeto, `O.ui.anunciar(texto)` (região viva), `O.ui.notificar(texto, { gravidade })` (avisos passageiros no canto da tela), `O.ui.doisToques(botao, pergunta, acao, { exigir })` (confirmação sem janela modal), indicadores da barra (§5.3), guarda automática e convite "Retomar" (D29), preferências salvas, painel "Condições do ambiente" (inclui "Instalado como aplicativo" e "Disponível sem internet"), registro do service worker com o aviso "Nova versão disponível" (§12.1) e auditorias em modo de desenvolvimento. Inicializa os demais módulos da interface.
 
 ## 4. Fluxo de dados: do Markdown ao slide
 
@@ -325,7 +325,7 @@ Banco `oratoria`, versão 1, lojas chave-valor criadas de uma vez: `rascunho` (`
 
 ### 9.3 Embutíveis
 
-`tools/gerar-embutiveis.mjs` produz `embutiveis/fontes-base64.js` (oito faces IBM Plex), `embutiveis/chart-fonte.js` (Chart.js como string, com `</script` escapado), `embutiveis/MANIFESTO.js` (hashes das origens e da saída) e `sw-recursos.js` (lista e nome do cache do service worker, derivados do `index.html`). `embutiveis/exemplos.js` reúne os decks de `exemplos/<tema>/` (Markdown, CSV como texto e imagens como data URL) numa string JSON, lida com `JSON.parse` quando o usuário abre um exemplo. Saída determinística; versionada no Git.
+`tools/gerar-embutiveis.mjs` produz `embutiveis/fontes-base64.js` (oito faces IBM Plex), `embutiveis/chart-fonte.js` (Chart.js como string, com `</script` escapado), `embutiveis/MANIFESTO.js` (hashes das origens e da saída) e `sw-recursos.js` (lista e nome do cache do service worker, derivados do `index.html`, mais fontes, embutíveis, manifest e ícones; e `ORATORIA_REDE`, as URLs de `MODULOS_REDE` lidas de `config.js`). `embutiveis/exemplos.js` reúne os decks de `exemplos/<tema>/` (Markdown, CSV como texto e imagens como data URL) numa string JSON, lida com `JSON.parse` quando o usuário abre um exemplo. Saída determinística; versionada no Git.
 
 ### 9.4 Exemplos
 
@@ -352,6 +352,7 @@ Atributos: `data-dica` (texto), `data-dica-titulo`, `data-dica-formula` (bloco e
 | `tools/vendor.mjs` | Copia bibliotecas de `node_modules/` para `vendor/`; compõe IIFEs quando o pacote não publica build clássico (markdown-it-attrs 5.x; subconjunto do highlight.js); copia fontes; grava `VERSOES.md` e licenças |
 | `tools/gerar-embutiveis.mjs` | Gera `embutiveis/*` e `sw-recursos.js` |
 | `tools/verificar.mjs` | Validações (tabela abaixo) |
+| `tools/icones.mjs` | Rasteriza `assets/icones/icone.svg` nos PNG 192, 512 e 512 *maskable* com o Edge ou Chrome instalado em modo headless (D39; `NAVEGADOR=<executável>` para indicar outro); resultado versionado |
 | `tools/lib/comum.mjs` | Utilitários compartilhados (hash, listagem, `literalSeguro`, referências do HTML) |
 
 Checagens do `verificar.mjs`:
@@ -368,6 +369,22 @@ Checagens do `verificar.mjs`:
 | 8 | Versão coerente; controles e indicadores do `index.html` com dica; arquivos de convenção presentes; **todo `.js` de `js/` descrito neste manual** (temas apenas informados); manual operacional presente |
 
 ## 12. Empacotamento, publicação e *release*
+
+### 12.1 Aplicativo instalável (PWA) e service worker
+
+`manifest.webmanifest` (nome "Apresenta", `display: standalone`, `lang: pt-BR`, cores do tema escuro, ícones de `assets/icones/`) é citado no `index.html` com os ícones da aba. `sw.js` fica na raiz e importa `sw-recursos.js` (D6):
+
+| Pedido | Estratégia |
+|---|---|
+| Arquivos do núcleo (mesma origem, dentro do escopo) | Cache primeiro (`ORATORIA_CACHE`); a página principal, com ou sem `?dev`, usa sempre a cópia de `./`; sem cópia, rede |
+| Módulos de `MODULOS_REDE` (KaTeX, Mermaid, SheetJS) | Rede primeiro; a resposta é guardada em `oratoria-rede-1` para uso sem internet |
+| Sonda de rede e demais endereços externos; `sw.js` e `sw-recursos.js` | Não interceptados |
+
+Ciclo de vida: a instalação baixa a lista inteira com `cache: 'reload'` e chama `skipWaiting()`; a ativação remove os caches `oratoria-*` de outras versões e chama `clients.claim()`. A página aberta segue com o código já carregado; `app.js` percebe a troca de controlador (`controllerchange`, só quando já havia um) e mostra a faixa `#faixa-atualizacao` ("Nova versão disponível", botões Recarregar e Depois). A recarga seguinte usa a nova versão. Nada do trabalho do usuário é guardado pelo service worker (D40).
+
+Registro: somente em `https:` e fora da edição portátil. Para testes locais, `index.html?dev&sw` em `localhost` ou `127.0.0.1` também registra (contexto seguro e modo de desenvolvimento).
+
+### 12.2 Edições e publicação
 
 *(Etapas 8 e 9.)* `tools/empacotar.mjs` gerará `dist/oratoria-pasta.zip` e `dist/oratoria-portatil.html` (com o manual operacional também em HTML). Workflows: `verificar.yml`, `publicar.yml` (raiz no Pages, sem `tools/`, `.github/`, `node_modules/`, `dist/`, `package*.json`) e `release.yml` (tag `v*`).
 
@@ -406,6 +423,8 @@ Acréscimos da etapa 7 (exportações), também em `CLAUDE.md` §5:
 - **D36** Gráficos convertidos em imagem para impressão e PDF.
 - **D37** Tamanho real informado após cada exportação.
 - **D38** Suporte a Chrome, Edge, Firefox e derivados; Safari fora do escopo.
+- **D39** Ícones PNG rasterizados pelo navegador instalado (`tools/icones.mjs`), sem dependência de imagem; versionados.
+- **D40** O service worker guarda só os arquivos da aplicação; nada do trabalho do usuário.
 
 ## 14. Limitações conhecidas
 

@@ -271,10 +271,24 @@
     if (!lista) return;
     const linhas = [];
     const protocolo = location.protocol.replace(':', '');
-    const rotuloModo = protocolo === 'file' ? 'Arquivo local' : protocolo === 'https' ? 'Publicado (https)' : protocolo;
+    const rotuloModo = C.EDICAO === 'portatil' ? 'Edição portátil (arquivo único)'
+      : protocolo === 'file' ? 'Arquivo local' : protocolo === 'https' ? 'Publicado (https)' : protocolo;
     linhas.push(linhaVerificacao('Modo de abertura',
-      'Como esta cópia foi aberta. Em arquivo local (file://) tudo funciona sem servidor; a instalação como aplicativo só existe na versão publicada.',
+      'Como esta cópia foi aberta. Em arquivo local (file://) tudo funciona sem servidor; a instalação como aplicativo só existe na versão publicada. A edição portátil reúne a aplicação num único arquivo, sem os exemplos.',
       'ok', rotuloModo));
+
+    const instalado = matchMedia('(display-mode: standalone)').matches || matchMedia('(display-mode: window-controls-overlay)').matches;
+    linhas.push(linhaVerificacao('Instalado como aplicativo',
+      'Indica se esta janela é a do aplicativo instalado. Na versão publicada, o Chrome e o Edge oferecem "Instalar Apresenta" na barra de endereço; o Firefox não instala aplicativos no computador.',
+      instalado ? 'ok' : 'pendente', instalado ? 'sim' : 'não',
+      instalado ? null : (servico.permitido
+        ? 'Aberto numa aba do navegador. Para instalar, use o ícone de instalação na barra de endereço (Chrome e Edge).'
+        : 'A instalação só existe na versão publicada (https). Esta cópia funciona normalmente sem ela.')));
+
+    const offline = await situacaoOffline();
+    linhas.push(linhaVerificacao('Disponível sem internet',
+      'Confere se os arquivos da aplicação estão guardados pelo navegador para abrir sem conexão. Só os arquivos da aplicação são guardados; o trabalho fica nos rascunhos deste navegador.',
+      offline.estado, offline.texto, offline.dica));
 
     const ausentes = BIBLIOTECAS.filter(([g]) => !window[g]);
     linhas.push(linhaVerificacao('Bibliotecas locais',
@@ -321,6 +335,58 @@
     const selo = itemRede.querySelector('.selo');
     selo.dataset.estado = online ? 'ok' : 'aviso';
     selo.textContent = online ? 'disponível' : 'indisponível';
+  }
+
+  // ── Service worker (versão publicada; D40) ─────────────────────────────
+  // Somente em https (§2.7). Para testes locais, ?sw em localhost/127.0.0.1 (modo desenvolvimento).
+  const servico = {
+    permitido: 'serviceWorker' in navigator && C.EDICAO !== 'portatil' &&
+      (location.protocol === 'https:' || (C.DESENVOLVIMENTO && /[?&]sw\b/.test(location.search) && window.isSecureContext)),
+    registro: null,
+    falha: null,
+  };
+
+  async function situacaoOffline() {
+    if (!servico.permitido) {
+      return { estado: 'pendente', texto: C.EDICAO === 'portatil' || location.protocol === 'file:' ? 'arquivo local' : 'não se aplica',
+        dica: 'Em arquivo local a aplicação já abre sem internet, direto da pasta ou do arquivo. O armazenamento para uso sem conexão existe só na versão publicada.' };
+    }
+    if (servico.falha) return { estado: 'erro', texto: 'falhou', dica: `O navegador recusou o registro: ${servico.falha}` };
+    try {
+      const reg = servico.registro || await navigator.serviceWorker.getRegistration();
+      if (!reg || !navigator.serviceWorker.controller) return { estado: 'aviso', texto: 'preparando', dica: 'Os arquivos estão sendo guardados. Recarregue a página em instantes para conferir de novo.' };
+      const nomes = (await caches.keys()).filter((n) => n.startsWith(`${C.APP_SLUG}-${C.VERSAO}-`));
+      return nomes.length
+        ? { estado: 'ok', texto: 'sim', dica: `Arquivos guardados no cache "${nomes[0]}". Sem conexão, a aplicação abre desta cópia; fórmulas, diagramas e planilhas .xlsx funcionam se já tiverem sido usados com internet.` }
+        : { estado: 'aviso', texto: 'preparando', dica: 'O cache da versão atual ainda não está completo.' };
+    } catch (e) {
+      return { estado: 'aviso', texto: 'indeterminado', dica: e.message };
+    }
+  }
+
+  function avisarNovaVersao() {
+    const faixa = U.$('#faixa-atualizacao');
+    if (!faixa || !faixa.hidden) return;
+    faixa.hidden = false;
+    O.ui.anunciar('Nova versão disponível. Recarregue a página para usá-la.');
+    U.$('#botao-atualizar-versao').onclick = () => location.reload();
+    U.$('#botao-adiar-versao').onclick = () => { faixa.hidden = true; };
+  }
+
+  function iniciarServico() {
+    if (!servico.permitido) return;
+    const sw = navigator.serviceWorker;
+    // Havia controlador ao abrir → uma troca de controlador significa versão nova já ativa.
+    // Sem controlador (primeira visita), a troca é só a instalação inicial.
+    let tinhaControlador = !!sw.controller;
+    sw.addEventListener('controllerchange', () => {
+      if (tinhaControlador) avisarNovaVersao();
+      tinhaControlador = true;
+    });
+    sw.register('sw.js').then((reg) => { servico.registro = reg; }).catch((e) => {
+      servico.falha = e.message;
+      console.warn(`[${C.APP_NOME}] service worker não registrado:`, e);
+    });
   }
 
   // ── Preferências salvas ────────────────────────────────────────────────
@@ -370,7 +436,7 @@
       }
     });
 
-    // Service worker: somente em https (registrado a partir da etapa 8, quando sw.js existir).
+    iniciarServico();
   }
 
   iniciar();

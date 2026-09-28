@@ -5,7 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="dark light">
   <meta name="description" content="Composição de apresentações em HTML a partir de Markdown e imagens.">
+  <meta name="theme-color" content="#0f1318">
   <title>Apresenta</title>
+
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="assets/icones/icone.svg" type="image/svg+xml">
+  <link rel="icon" href="assets/icones/icone-192.png" type="image/png" sizes="192x192">
 
   <link rel="stylesheet" href="css/fontes.css">
   <link rel="stylesheet" href="css/app.css">
@@ -508,6 +513,14 @@
                   data-dica-posicao="abaixo" aria-label="Atalhos do editor">?</button>
         </div>
         <div class="zona-corpo editor">
+          <div class="aviso-faixa faixa-retomar" id="faixa-atualizacao" role="status" hidden>
+            <span>Nova versão disponível. A recarga da página passa a usá-la; o trabalho em andamento fica guardado neste navegador.</span>
+            <span class="zona-espaco"></span>
+            <button type="button" class="botao botao-primario" id="botao-atualizar-versao"
+                    data-dica="Recarrega a página com a nova versão. O texto e o acervo são guardados antes; na volta, use Retomar para continuar de onde parou.">Recarregar</button>
+            <button type="button" class="botao botao-discreto" id="botao-adiar-versao"
+                    data-dica="Oculta o aviso e continua com a versão atual. A nova versão entra na próxima vez que a página for aberta.">Depois</button>
+          </div>
           <div class="aviso-faixa faixa-retomar" id="faixa-retomar" hidden>
             <span data-texto></span>
             <span class="zona-espaco"></span>

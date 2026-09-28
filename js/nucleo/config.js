@@ -10,6 +10,8 @@
   c.APP_NOME = 'Apresenta';
   c.APP_SLUG = 'oratoria'; // identificador estável: prefixo de arquivos, bancos e caches (D31)
   c.VERSAO = '0.1.0';
+  // 'completa' (pasta ou versão publicada) | 'portatil' (arquivo único; redefinida por tools/empacotar.mjs)
+  c.EDICAO = 'completa';
 
   // ── Composição dos slides ────────────────────────────────────────────────
   c.PROPORCOES = {

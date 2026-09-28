@@ -468,7 +468,9 @@ O cartão **Condições do ambiente** informa se tudo está em ordem neste compu
 
 | Item | Significado |
 |---|---|
-| Modo de abertura | Arquivo local ou publicado |
+| Modo de abertura | Arquivo local, publicado ou edição portátil |
+| Instalado como aplicativo | Se esta janela é a do aplicativo instalado (versão publicada, Chrome e Edge) |
+| Disponível sem internet | Na versão publicada, se os arquivos da aplicação já estão guardados para abrir sem conexão |
 | Bibliotecas locais | Os componentes da pasta `vendor/` foram lidos |
 | Fontes IBM Plex | As fontes da pasta `assets/fontes/` foram lidas |
 | Guarda automática | Se o navegador aceita guardar o trabalho |
@@ -495,6 +497,7 @@ Cada item indica o slide e a linha. **Ir ao texto** leva o cursor até lá; **Ve
 | "Bibliotecas locais: ausentes" | Pasta `vendor/` incompleta | Copie novamente a pasta inteira |
 | Fontes diferentes do esperado | Pasta `assets/fontes/` ausente | Copie novamente a pasta inteira |
 | Rascunho sumiu | Pasta movida ou outro navegador | Use o projeto `.oratoria.json` para transportar |
+| Faixa "Nova versão disponível" | A versão publicada foi atualizada | Clique em **Recarregar** (o trabalho fica guardado e pode ser retomado) ou em **Depois**: a nova versão entra na próxima abertura |
 | "Imagem não encontrada no acervo" | Nome do arquivo diferente do citado | Confira maiúsculas, extensão e se a imagem foi carregada |
 
 ## 13. Glossário

@@ -1,7 +1,7 @@
 // ARQUIVO GERADO por tools/gerar-embutiveis.mjs — NÃO EDITAR À MÃO.
-// Origem: index.html
+// Origem: index.html, js/nucleo/config.js
 // Importado por sw.js via importScripts(). A assinatura muda sempre que qualquer recurso muda.
-self.ORATORIA_CACHE = "oratoria-0.1.0-cd4036a65319";
+self.ORATORIA_CACHE = "oratoria-0.1.0-7e8c6ca91fc9";
 self.ORATORIA_RECURSOS = [
   "./",
   "index.html",
@@ -58,6 +58,9 @@ self.ORATORIA_RECURSOS = [
   "js/interface/biblioteca.js",
   "js/interface/painel-composicao.js",
   "js/interface/app.js",
+  "manifest.webmanifest",
+  "assets/icones/icone.svg",
+  "assets/icones/icone-192.png",
   "css/fontes.css",
   "css/app.css",
   "css/componentes.css",
@@ -72,5 +75,13 @@ self.ORATORIA_RECURSOS = [
   "embutiveis/fontes-base64.js",
   "embutiveis/chart-fonte.js",
   "embutiveis/exemplos.js",
-  "embutiveis/MANIFESTO.js"
+  "embutiveis/MANIFESTO.js",
+  "assets/icones/icone-512.png",
+  "assets/icones/icone-maskable-512.png"
+];
+// Módulos sob demanda (C.MODULOS_REDE): rede primeiro, com cópia guardada para uso sem internet.
+self.ORATORIA_REDE = [
+  "https://cdn.jsdelivr.net/npm/katex@0.18.9/dist/katex.min.js",
+  "https://cdn.jsdelivr.net/npm/mermaid@12.0.0/dist/mermaid.min.js",
+  "https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"
 ];

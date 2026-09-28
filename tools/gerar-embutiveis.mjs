@@ -13,6 +13,7 @@
 import { readFileSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
 import { readdirSync, statSync } from 'node:fs';
+import { ICONES } from './icones.mjs';
 import { caminho, gravar, sha256, existe, lerTexto, log, formatarBytes, literalSeguro, referenciasHtml, ehExterno, listarArquivos, relativo } from './lib/comum.mjs';
 
 const MIME = { png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', webp: 'image/webp', gif: 'image/gif', svg: 'image/svg+xml' };
@@ -105,7 +106,7 @@ function planejarEmbutiveis() {
  * Lista de recursos do service worker (decisão D6), derivada do index.html.
  * Os embutíveis recém-planejados entram na assinatura pelo conteúdo em memória:
  * todo script e folha local referenciados, os embutíveis (exportação offline no PWA),
- * as fontes, os ícones e o manifest. Retorna null se o index.html ainda não existir.
+ * as fontes, os ícones e o manifest; e as URLs dos módulos de rede (C.MODULOS_REDE). Retorna null se o index.html ainda não existir.
  */
 function planejarRecursosSw(planejados = {}) {
   const indice = caminho('index.html');
@@ -118,13 +119,24 @@ function planejarRecursosSw(planejados = {}) {
     'embutiveis/chart-fonte.js',
     'embutiveis/exemplos.js',
     'embutiveis/MANIFESTO.js',
+    'manifest.webmanifest',
+    ...ICONES.map((i) => i.arquivo),
+    'assets/icones/icone.svg',
   ];
   const lista = ['./', 'index.html', ...new Set([...locais, ...extras])].filter((u) => u === './' || existe(caminho(u)));
   const versao = JSON.parse(lerTexto(caminho('package.json'))).version;
   const hashDe = (u) => (u in planejados ? sha256(planejados[u]) : sha256(readFileSync(caminho(u))));
   const assinatura = sha256(lista.map((u) => (u === './' ? '' : hashDe(u))).join('|')).slice(0, 12);
-  const conteudo = `${CABECALHO(['index.html'])}// Importado por sw.js via importScripts(). A assinatura muda sempre que qualquer recurso muda.\nself.ORATORIA_CACHE = ${JSON.stringify(`oratoria-${versao}-${assinatura}`)};\nself.ORATORIA_RECURSOS = ${JSON.stringify(lista, null, 2)};\n`;
+  const rede = modulosRede();
+  const conteudo = `${CABECALHO(['index.html', 'js/nucleo/config.js'])}// Importado por sw.js via importScripts(). A assinatura muda sempre que qualquer recurso muda.\nself.ORATORIA_CACHE = ${JSON.stringify(`oratoria-${versao}-${assinatura}`)};\nself.ORATORIA_RECURSOS = ${JSON.stringify(lista, null, 2)};\n// Módulos sob demanda (C.MODULOS_REDE): rede primeiro, com cópia guardada para uso sem internet.\nself.ORATORIA_REDE = ${JSON.stringify(rede, null, 2)};\n`;
   return { arquivo: 'sw-recursos.js', conteudo };
+}
+
+/** URLs de C.MODULOS_REDE, lidas do bloco correspondente de js/nucleo/config.js. */
+function modulosRede() {
+  const config = existe(caminho('js/nucleo/config.js')) ? lerTexto(caminho('js/nucleo/config.js')) : '';
+  const bloco = (config.match(/MODULOS_REDE\s*=\s*\{([\s\S]*?)\n\s*\};/) || [])[1] || '';
+  return [...bloco.matchAll(/\burl:\s*'(https:\/\/[^']+)'/g)].map((m) => m[1]);
 }
 
 export function planejar() {
