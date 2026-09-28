@@ -124,6 +124,7 @@
     botao(barra, 'Visão geral', 'Visão geral de todos os slides (O)', function () { visaoGeral(); });
     if (opcoes.apresentador) botao(barra, 'Apresentador', 'Abrir o modo apresentador em outra janela (P)', function () { abrirApresentador(); });
     botao(barra, 'Tela cheia', 'Alternar tela cheia (F)', function () { telaCheia(); });
+    var botaoPdf = opcoes.pdf ? botao(barra, 'PDF', 'Baixar a apresentação em PDF (D)', function () { gerarPdf(); }) : null;
     if (opcoes.sair) botao(barra, 'Sair', 'Encerrar a apresentação (Esc)', function () { opcoes.sair(); });
 
     // ── Estado ────────────────────────────────────────────────────────────
@@ -278,6 +279,18 @@
     });
     campoIr.addEventListener('input', function () { campoIr.value = campoIr.value.replace(/\D/g, '').slice(0, 4); });
 
+    // ── PDF (opcoes.pdf devolve uma promessa) ────────────────────────────
+    var gerandoPdf = false;
+    function gerarPdf() {
+      if (!opcoes.pdf || gerandoPdf) return;
+      gerandoPdf = true;
+      if (botaoPdf) botaoPdf.textContent = 'PDF…';
+      anuncio.textContent = 'Gerando o PDF…';
+      Promise.resolve().then(opcoes.pdf).then(function () { anuncio.textContent = 'PDF pronto.'; },
+        function () { anuncio.textContent = 'Não foi possível gerar o PDF; use Ctrl+P e "Salvar como PDF".'; })
+        .then(function () { gerandoPdf = false; if (botaoPdf) botaoPdf.textContent = 'PDF'; });
+    }
+
     // ── Modo apresentador ─────────────────────────────────────────────────
     function abrirApresentador() {
       if (!opcoes.apresentador) return;
@@ -327,6 +340,7 @@
         case 'p': case 'P': abrirApresentador(); break;
         case 'b': case 'B': case '.': escurecer(); break;
         case 'g': case 'G': abrirIr(); break;
+        case 'd': case 'D': if (opcoes.pdf) gerarPdf(); else tratado = false; break;
         case 'Escape':
           if (raiz.classList.contains('o-escuro')) escurecer(false);
           else if (!(doc.fullscreenElement || doc.webkitFullscreenElement) && typeof opcoes.sair === 'function') opcoes.sair();

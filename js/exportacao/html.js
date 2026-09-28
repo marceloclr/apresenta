@@ -9,7 +9,9 @@
 //     acervo em data URL; notas do orador em <aside class="o-notas"> (lidas pelo apresentador);
 //   • CSS dos slides + SOMENTE o tema escolhido, com os ajustes do projeto;
 //   • @font-face em data URL apenas das famílias usadas pelo tema (D13; embutível de fontes);
-//   • motorSlides, motorApresentador e motorGraficos reinjetados via toString();
+//   • motorSlides, motorApresentador, motorGraficos e motorPdf reinjetados via toString()
+//     (botão "PDF" e tecla D na apresentação);
+//   • folha de impressão (impressao.js): Ctrl+P imprime um slide por página;
 //   • Chart.js (embutível) apenas se houver gráfico;
 //   • CSP que bloqueia qualquer requisição externa (D4).
 // Realce de código já vem pré-renderizado pelo interpretador (D1).
@@ -31,11 +33,11 @@
   /** Protege CSS embutido em <style>. */
   const protegerEstilo = (css) => String(css).replace(/<\/(style)/gi, '<\\/$1');
 
-  /** @font-face em data URL para as faces das famílias indicadas. */
-  function cssFontes(faces, familias) {
+  /** @font-face em data URL para as faces das famílias indicadas (também usado pelo PDF). */
+  const cssFontes = H.cssFontes = function (faces, familias) {
     return faces.filter((f) => familias.includes(f.familia)).map((f) =>
       `@font-face { font-family: '${f.familia}'; font-style: ${f.estilo}; font-weight: ${f.peso}; font-display: block; src: url(data:font/woff2;base64,${f.base64}) format('woff2'); }`).join('\n');
-  }
+  };
 
   const CSS_PAGINA = [
     'html, body { margin: 0; height: 100%; overflow: hidden; background: #000; }',
@@ -76,15 +78,33 @@
     const opcoes = {
       largura, altura, hash: true, transicao: meta.transicao, titulo,
     };
+    const pdf = {
+      largura, altura, tema: meta.tema, escala: C.PDF_RESOLUCOES['1,5x'], qualidade: C.PDF_QUALIDADE,
+      titulo, autor: meta.autor || '', produtor: `${C.APP_NOME} ${C.VERSAO}`, nome: H.nomeArquivo(projeto, meta, '.pdf'),
+    };
+    // O script de início (não autossuficiente) liga o motor, o apresentador, os gráficos e o PDF.
     const motor = [
       `var motorSlides = ${S.motorSlides.toString()};`,
       `var motorApresentador = ${S.motorApresentador.toString()};`,
       `var motorGraficos = ${S.motorGraficos.toString()};`,
+      `var motorPdf = ${O.exportacao.motorPdf.toString()};`,
       `(function () {`,
       `  var opcoes = ${JSON.stringify(opcoes)};`,
+      `  var pdf = ${JSON.stringify(pdf)};`,
+      `  var deck = document.getElementById('deck');`,
       `  opcoes.apresentador = motorApresentador;`,
       `  if (typeof Chart !== 'undefined') opcoes.graficos = motorGraficos;`,
-      `  var deck = document.getElementById('deck');`,
+      `  opcoes.pdf = function () {`,
+      `    var css = ['o-fontes', 'o-slides'].map(function (id) { var e = document.getElementById(id); return e ? e.textContent : ''; }).join('\\n');`,
+      `    pdf.slides = deck.querySelectorAll('.o-trilho > .o-slide');`,
+      `    pdf.css = css;`,
+      `    return motorPdf(pdf).then(function (blob) {`,
+      `      var a = document.createElement('a');`,
+      `      a.href = URL.createObjectURL(blob); a.download = pdf.nome; a.style.display = 'none';`,
+      `      document.body.appendChild(a); a.click(); a.remove();`,
+      `      setTimeout(function () { URL.revokeObjectURL(a.href); }, 30000);`,
+      `    });`,
+      `  };`,
       `  motorSlides(deck, opcoes);`,
       `  deck.focus();`,
       `})();`,
@@ -102,7 +122,7 @@
       meta.autor ? `<meta name="author" content="${e(meta.autor)}">` : null,
       `<title>${e(titulo)}</title>`,
       `<style id="o-fontes">\n${protegerEstilo(fontes)}\n</style>`,
-      `<style id="o-pagina">\n${CSS_PAGINA}\n</style>`,
+      `<style id="o-pagina">\n${CSS_PAGINA}\n${O.exportacao.impressao.css(largura, altura)}\n</style>`,
       `<style id="o-slides">\n${protegerEstilo(r.css)}\n</style>`,
       '</head>',
       '<body>',

@@ -65,9 +65,12 @@
   <script defer src="js/conteudo/imagens.js"></script>
   <!-- ═══ 6. Exportação ═══ -->
   <script defer src="js/exportacao/zip.js"></script>
+  <script defer src="js/exportacao/impressao.js"></script>
+  <script defer src="js/exportacao/pdf-runtime.js"></script>
   <script defer src="js/exportacao/html.js"></script>
   <script defer src="js/exportacao/projeto.js"></script>
   <script defer src="js/exportacao/markdown.js"></script>
+  <script defer src="js/exportacao/pdf.js"></script>
   <!-- ═══ 7. Serviços ═══ -->
 
   <!-- ═══ 8. Interface (app.js por último) ═══ -->
@@ -399,7 +402,23 @@
                 <button type="button" class="botao botao-primario" id="botao-exportar-html"
                         data-dica="Gera o arquivo .html da apresentação (nome: título e data). Ele não faz nenhum acesso à internet: imagens da web não aparecem, acrescente-as ao acervo. Setas, O, P, B e F funcionam nele como no editor.">Exportar em HTML</button>
               </div>
-              <p class="cartao-nota">PDF (direto ou pela impressão): na próxima entrega.</p>
+            </div>
+            <div class="cartao" data-cor="apresentar">
+              <h3>PDF</h3>
+              <p class="cartao-nota">Um slide por página, com os itens progressivos já revelados. O PDF direto também é pesquisável (camada de texto invisível).</p>
+              <div class="grupo-campos">
+                <label class="campo">
+                  <span class="campo-rotulo">Nitidez</span>
+                  <select class="entrada" id="campo-resolucao-pdf" style="--largura: 22ch"
+                          data-dica="Resolução das páginas do PDF direto. Normal (1920 px de largura) basta para projeção e leitura em tela; alta (2880 px) serve à impressão em papel, com arquivo maior."></select>
+                </label>
+              </div>
+              <div class="grupo-botoes">
+                <button type="button" class="botao" id="botao-exportar-pdf"
+                        data-dica="Gera o PDF diretamente, sem a janela de impressão: cada slide vira uma imagem, com o texto pesquisável por cima. Leva alguns segundos por slide.">PDF direto</button>
+                <button type="button" class="botao botao-discreto" id="botao-imprimir"
+                        data-dica="Abre a janela de impressão do navegador com um slide por página. Para gerar PDF, escolha &quot;Salvar como PDF&quot; como destino e desative cabeçalhos e rodapés do navegador em &quot;Mais configurações&quot;.">Imprimir…</button>
+              </div>
             </div>
             <div class="cartao" data-cor="apresentar">
               <h3>Levar o trabalho</h3>

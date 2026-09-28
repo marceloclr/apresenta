@@ -84,6 +84,17 @@
       estado(`Último arquivo: ${r.nome} · ${U.formatarBytes(r.bytes)}.`);
       O.ui.notificar(`Texto "${r.nome}" gerado. As imagens são citadas pelo nome; para levá-las junto, use o pacote ZIP.`, { gravidade: 'ok' });
     }),
+    pdf: () => exportar('PDF', async (projeto) => {
+      const escala = Number(U.$('#campo-resolucao-pdf')?.value) || 1;
+      const r = await X.pdf.baixar(projeto, { escala, aoProgredir: (etapa, fracao) => estado(`PDF: ${etapa.toLowerCase()} (${Math.round(fracao * 100)}%)`) });
+      estado(`Último arquivo: ${r.nome} · ${U.formatarBytes(r.blob.size)} · ${r.paginas} páginas.`);
+      O.ui.notificar(`PDF "${r.nome}" gerado: ${r.paginas} páginas, ${U.formatarBytes(r.blob.size)}.`, { gravidade: 'ok' });
+    }),
+    imprimir: () => exportar('Impressão', async (projeto) => {
+      estado('Impressão: preparando os slides…');
+      const r = await X.impressao.imprimir(projeto);
+      estado(`Impressão enviada ao navegador: ${r.slides} páginas.`);
+    }),
     pacote: () => exportar('Pacote ZIP', async (projeto) => {
       const r = X.markdown.baixarPacote(projeto);
       estado(`Último arquivo: ${r.nome} · ${U.formatarBytes(r.bytes)} · ${r.arquivos} arquivos.`);
@@ -139,6 +150,15 @@
     U.$('#botao-exportar-projeto')?.addEventListener('click', acoes.projeto);
     U.$('#botao-exportar-md')?.addEventListener('click', acoes.markdown);
     U.$('#botao-exportar-zip')?.addEventListener('click', acoes.pacote);
+    U.$('#botao-exportar-pdf')?.addEventListener('click', acoes.pdf);
+    U.$('#botao-imprimir')?.addEventListener('click', acoes.imprimir);
+    const resolucao = U.$('#campo-resolucao-pdf');
+    if (resolucao) {
+      const rotulos = { 1: 'Normal (1920 px)', 1.5: 'Alta (2880 px)' };
+      resolucao.replaceChildren(...Object.values(O.config.PDF_RESOLUCOES).map((v) => U.el('option', { value: String(v) }, rotulos[v] || `${v}×`)));
+      O.persistencia.preferencia('resolucaoPdf', '1').then((v) => { resolucao.value = String(v); });
+      resolucao.addEventListener('change', () => O.persistencia.definirPreferencia('resolucaoPdf', resolucao.value));
+    }
     U.$('#botao-abrir-projeto')?.addEventListener('click', () => U.$('#entrada-projeto')?.click());
     const entrada = U.$('#entrada-projeto');
     entrada?.addEventListener('change', () => {

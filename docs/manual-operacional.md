@@ -380,6 +380,7 @@ Use o botão **Apresentar** da barra superior (a partir do slide do cursor) ou a
 | **O** | Visão geral: todos os slides em miniatura; escolha com as setas e Enter |
 | **B** ou **.** | Escurece a tela (pausa); repita para voltar |
 | **F** | Tela cheia |
+| **D** | Baixa a apresentação em PDF (somente no arquivo exportado) |
 | **P** | Modo apresentador em outra janela |
 | Esc | Fecha a visão geral ou a tela escura; no editor, encerra a apresentação |
 
@@ -423,7 +424,12 @@ Ao terminar, um aviso mostra o tamanho real do arquivo e a estimativa do indicad
 
 **Abrir um projeto** substitui o trabalho atual. Se houver trabalho em andamento, uma faixa acima do editor pede confirmação. O trabalho substituído fica guardado neste navegador e é oferecido em **Retomar** na próxima abertura. Por segurança, imagens em formato não aceito e itens estranhos ao projeto são descartados, com aviso.
 
-PDF (direto e pela impressão): *(em preparação)*.
+**PDF.** Um slide por página, com os itens progressivos já revelados:
+
+- **PDF direto** gera o arquivo sem passar pela janela de impressão. Cada slide vira uma imagem, e o texto fica pesquisável por baixo dela (Ctrl+F no leitor de PDF encontra as palavras). Em **Nitidez**, "Normal" basta para tela e projeção; "Alta" serve à impressão em papel, com arquivo maior. Leva alguns segundos por slide: mantenha a aba aberta até o aviso de conclusão.
+- **Imprimir…** abre a janela de impressão do navegador. Para gerar PDF por ela, escolha **Salvar como PDF** como destino e, em "Mais configurações", desative **Cabeçalhos e rodapés**.
+
+O arquivo HTML exportado também gera PDF: botão **PDF** na barra que surge ao mover o mouse, ou tecla **D**. **Ctrl+P** nele imprime um slide por página.
 
 ## 9. Biblioteca *(em preparação)*
 

@@ -74,6 +74,7 @@
     ['P', 'Modo apresentador em outra janela'],
     ['B ou .', 'Escurece a tela'],
     ['F', 'Tela cheia'],
+    ['D', 'Baixa o PDF (no arquivo exportado)'],
     ['Esc', 'Fecha a visão geral; no editor, encerra a apresentação'],
   ];
 
