@@ -12,7 +12,7 @@
 5. Escrevendo os slides: guia de sintaxe
 6. Escolhendo o tema conforme o ambiente
 7. Apresentando
-8. Exportando *(em preparação)*
+8. Exportando
 9. Biblioteca *(em preparação)*
 10. Guarda automática e transporte do trabalho
 11. Conferência
@@ -31,7 +31,7 @@ A apresentação final é **um único arquivo `.html`**, que abre em qualquer na
 
 | Forma | Como fazer | Observações |
 |---|---|---|
-| **Pasta no computador ou pendrive** | Abra a pasta e dê duplo clique em `index.html` | Funciona sem internet. Use Chrome, Edge ou Firefox |
+| **Pasta no computador ou pendrive** | Abra a pasta e dê duplo clique em `index.html` | Funciona sem internet. Use Chrome, Edge, Firefox ou navegadores derivados deles (o Safari não é suportado) |
 | **Arquivo zip recebido** | **Extraia o zip primeiro** (botão direito → "Extrair tudo"); depois abra `index.html` | Abrir de dentro do zip, sem extrair, **não funciona** |
 | **Endereço na internet** *(em preparação)* | Acesse o endereço publicado | Pode ser instalado como aplicativo |
 | **Arquivo portátil** *(em preparação)* | Dê duplo clique em `oratoria-portatil.html` | Um só arquivo, ideal para envio por e-mail |
@@ -402,9 +402,28 @@ As setas e o espaço funcionam também nessa janela. Se o navegador bloquear a a
 
 No arquivo exportado, o endereço termina em `#/7` quando você está no slide 7. Abrir o arquivo com esse final leva direto ao slide — útil para retomar uma aula de onde parou.
 
-## 8. Exportando *(em preparação)*
+## 8. Exportando
 
-HTML autocontido, PDF (direto ou pela impressão), projeto `.oratoria.json` e Markdown.
+Tudo fica na aba **Apresentar e exportar**. Os arquivos vão para a pasta de downloads do navegador, com o título e a data no nome (por exemplo, `introducao-ao-orcamento_2026-10-05.html`).
+
+| Botão | Gera | Para quê |
+|---|---|---|
+| **Exportar em HTML** | `.html` | A apresentação pronta, num único arquivo. Abre com duplo clique em qualquer navegador, sem internet. Todos os atalhos de teclado, a visão geral e o modo apresentador funcionam nele. |
+| **Exportar projeto** | `.oratoria.json` | Tudo o que compõe o trabalho (texto, imagens, planilhas, ajustes). Serve para continuar em outro computador ou guardar uma cópia de segurança. |
+| **Abrir projeto…** | — | Reabre um `.oratoria.json`. Também é possível arrastá-lo para a janela. |
+| **Texto (.md)** | `.md` | Só o texto, para editar em outro programa. |
+| **Texto e acervo (.zip)** | `.zip` | O texto e todos os arquivos do acervo numa pasta. Depois de extraída, a pasta pode ser reaberta com **Abrir pasta**. |
+
+Ao terminar, um aviso mostra o tamanho real do arquivo e a estimativa do indicador **Arquivo**.
+
+**No arquivo HTML exportado:**
+
+- Nada é buscado na internet. Imagens citadas por endereço da web (`https://…`) não aparecem: acrescente-as ao Acervo antes de exportar. O aviso da exportação e a aba Conferência indicam os casos.
+- O endereço termina em `#/7` quando você está no slide 7; abrir o arquivo com esse final leva direto ao slide.
+
+**Abrir um projeto** substitui o trabalho atual. Se houver trabalho em andamento, uma faixa acima do editor pede confirmação. O trabalho substituído fica guardado neste navegador e é oferecido em **Retomar** na próxima abertura. Por segurança, imagens em formato não aceito e itens estranhos ao projeto são descartados, com aviso.
+
+PDF (direto e pela impressão): *(em preparação)*.
 
 ## 9. Biblioteca *(em preparação)*
 
@@ -419,7 +438,7 @@ O trabalho é guardado automaticamente **no navegador** deste computador, dois s
 Atenção:
 
 - A guarda fica ligada ao **local** de onde o Apresenta foi aberto. Se a pasta for movida ou aberta de outro pendrive, os rascunhos **não** a acompanham.
-- Para levar o trabalho a outro computador, use o arquivo de projeto `.oratoria.json` *(em preparação)*.
+- Para levar o trabalho a outro computador, use **Exportar projeto** (`.oratoria.json`) e, no destino, **Abrir projeto…** ou arraste o arquivo para a janela.
 - Se a Conferência indicar "Guarda apenas nesta sessão", o navegador recusou a guarda: exporte o trabalho antes de fechar a página.
 
 ## 11. Conferência

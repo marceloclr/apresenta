@@ -134,7 +134,17 @@ Ordem no `index.html` (todos com `defer`, que preserva a ordem de execução):
 
 **`js/conteudo/graficos.js`** — bloco ```` ```grafico ```` (`tipo`, `fonte` ou `dados` inline em CSV ou lista YAML, `rotulos`, `series`, `ordenar`, `limite`, `alternavel` — padrão sim —, `titulo`, `empilhado`). `O.conteudo.graficos.preparar(spec, ctx)` normaliza a especificação (séries padrão: colunas numéricas) e `html(g)` produz a figura estática: `data-grafico` com o JSON, `<canvas>` com rótulo acessível e tabela alternativa `.o-grafico-dados`.
 
-### 3.4 Interface
+### 3.4 Exportação
+
+**`js/exportacao/zip.js`** (`O.exportacao.zip`) — gerador de ZIP próprio (D33): `criar([{ nome, dados, data }])` → `Blob`; método *store*, CRC-32 por tabela, datas MS-DOS, nomes UTF-8 (bit 11); sem ZIP64. `crc32(bytes)` exposto para testes.
+
+**`js/exportacao/html.js`** (`O.exportacao.html`) — apresentação autocontida (§9.1). `gerar(projeto, { aoProgredir })` → `{ html, nome, bytes, slides, avisos, parcelas }`: chama `O.slides.renderizar` (montagem e paginação), lê os embutíveis `fontes` (só as famílias de `familiasUsadas`, D13) e `chart` (só se houver `figure.o-grafico`), e compõe o documento: CSP de D4, `<style>` de fontes (data URL), página, slides e tema com ajustes; `<div id="deck" data-tema>` com as seções (sem `data-origem`); Chart.js e o *script* que declara `motorSlides`, `motorApresentador` e `motorGraficos` por `toString()` e os inicia com `hash: true`. O conteúdo de `<script>` e `<style>` é protegido contra `</script`, `</style` e `<!--`. `baixar(projeto)` gera e oferece o download; `nomeArquivo(projeto, meta, extensao)` → `titulo-normalizado_AAAA-MM-DD.ext`.
+
+**`js/exportacao/projeto.js`** (`O.exportacao.projeto`) — projeto `.oratoria.json` (§5.5): `serializar(projeto)` → `{ texto, nome, bytes }`, `baixar(projeto)` e `ler(arquivoOuTexto)` → `{ projeto, avisos, origem }`. Formato `{ formato: 'oratoria.projeto', versaoFormato: 1, aplicacao, exportadoEm, projeto: { titulo, markdown, acervo, ajustesTema, opcoes } }`. A leitura trata o arquivo como não confiável (D35): limite de tamanho, recusa de formato desconhecido ou mais novo, nomes do acervo reduzidos ao nome-base, só data URLs `image/png|jpeg|webp|gif|svg+xml` (SVG sanitizado de novo), CSV só como texto, ajustes e opções dentro dos limites; o que for descartado vira aviso.
+
+**`js/exportacao/markdown.js`** (`O.exportacao.markdown`) — `texto(projeto)`, `baixarTexto(projeto)` (`.md`) e `baixarPacote(projeto)` (`.zip` com uma pasta contendo o `.md` e os arquivos do acervo pelo nome citado no texto; D33).
+
+### 3.5 Interface
 
 **`js/interface/dicas.js`** — componente de dicas (§10.1). API: `O.ui.dicas.iniciar()`, `definir(el, { texto, titulo, formula, posicao })`, `indisponivel(el, motivo)`, `disponivel(el)`, `ocultar()`, `auditar(raiz)`.
 
@@ -158,9 +168,11 @@ Ordem no `index.html` (todos com `defer`, que preserva a ordem de execução):
 
 **`js/interface/painel-guia.js`** (`O.ui.guia`) — aba Guia, montada na primeira ativação: seções da sintaxe (cabeçalho, separação, diretivas, contêineres, colunas, imagens, tabelas, tabela de planilha, gráficos, código), cada uma com exemplo, "Copiar" (`navigator.clipboard`, com recuo para `execCommand('copy')`) e "Inserir no cursor" (o cabeçalho só é acrescentado se o texto ainda não tiver um); atalhos de apresentação; remissão ao manual operacional. API: `iniciar()`.
 
+**`js/interface/painel-apresentar.js`** (`O.ui.apresentar`) — aba Apresentar e exportar: `apresentar(doSlideAtual)` (botões da barra, da pré-visualização e da aba; ao encerrar, o editor vai ao slide de origem), exportações com indicação de andamento em `#estado-exportacao` e bloqueio de execuções simultâneas (HTML, projeto, `.md`, `.zip`; o aviso do HTML compara o tamanho real com a estimativa, D37, e resume imagens externas ou ausentes), e `abrirProjeto(arquivo)`: lê com `O.exportacao.projeto.ler` e, havendo trabalho, pede confirmação na faixa `#faixa-abrir-projeto`, gravando o trabalho substituído em `rascunho/anterior` (D35). A ingestão encaminha a este módulo todo `.json` recebido.
+
 **`js/interface/painel-composicao.js`** (`O.ui.composicao`) — aba Composição: abrir arquivos ou pasta, novo projeto (confirmação em dois toques), exemplos (D22, lidos sob demanda do embutível) e blocos prontos. Os layouts entram como novo slide após o slide sob o cursor (`MODELOS_LAYOUT`); os blocos de conteúdo, no cursor (`BLOCOS`), com modelos que citam o primeiro arquivo adequado do acervo. API: `iniciar`, `novoProjeto`, `abrirExemplo(id)`.
 
-**`js/interface/app.js`** — orquestração: identidade (nome e versão), tema da interface, validação do título do projeto, `O.ui.anunciar(texto)` (região viva), `O.ui.notificar(texto, { gravidade })` (avisos passageiros no canto da tela), `O.ui.doisToques(botao, pergunta, acao, { exigir })` (confirmação sem janela modal), indicadores da barra (§5.3), guarda automática e convite "Retomar" (D29), botões de apresentação (ao encerrar, o editor vai ao slide em que a apresentação parou), preferências salvas, painel "Condições do ambiente" e auditorias em modo de desenvolvimento. Inicializa os demais módulos da interface.
+**`js/interface/app.js`** — orquestração: identidade (nome e versão), tema da interface, validação do título do projeto, `O.ui.anunciar(texto)` (região viva), `O.ui.notificar(texto, { gravidade })` (avisos passageiros no canto da tela), `O.ui.doisToques(botao, pergunta, acao, { exigir })` (confirmação sem janela modal), indicadores da barra (§5.3), guarda automática e convite "Retomar" (D29), preferências salvas, painel "Condições do ambiente" e auditorias em modo de desenvolvimento. Inicializa os demais módulos da interface.
 
 ## 4. Fluxo de dados: do Markdown ao slide
 
@@ -377,6 +389,15 @@ Acréscimos da etapa 6 (interface do editor), com o enunciado completo em `CLAUD
 - **D30** Edições programáticas desfazíveis (`execCommand('insertText')`) e confirmação em dois toques.
 - **D31** Nome **Apresenta**; identificadores `Oratoria`/`oratoria` mantidos.
 - **D32** `data-origem` em cada seção montada.
+
+Acréscimos da etapa 7 (exportações), também em `CLAUDE.md` §5:
+
+- **D33** Texto em `.md` e pacote `.zip` com gerador próprio.
+- **D34** Publicação no GitHub adiada para a etapa 10.
+- **D35** Abertura de projeto com confirmação e importação tratada como não confiável.
+- **D36** Gráficos convertidos em imagem para impressão e PDF.
+- **D37** Tamanho real informado após cada exportação.
+- **D38** Suporte a Chrome, Edge, Firefox e derivados; Safari fora do escopo.
 
 ## 14. Limitações conhecidas
 

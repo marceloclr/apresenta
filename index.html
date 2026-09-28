@@ -64,6 +64,10 @@
   <script defer src="js/conteudo/graficos.js"></script>
   <script defer src="js/conteudo/imagens.js"></script>
   <!-- ═══ 6. Exportação ═══ -->
+  <script defer src="js/exportacao/zip.js"></script>
+  <script defer src="js/exportacao/html.js"></script>
+  <script defer src="js/exportacao/projeto.js"></script>
+  <script defer src="js/exportacao/markdown.js"></script>
   <!-- ═══ 7. Serviços ═══ -->
 
   <!-- ═══ 8. Interface (app.js por último) ═══ -->
@@ -78,6 +82,7 @@
   <script defer src="js/interface/painel-tema.js"></script>
   <script defer src="js/interface/conferencia.js"></script>
   <script defer src="js/interface/painel-guia.js"></script>
+  <script defer src="js/interface/painel-apresentar.js"></script>
   <script defer src="js/interface/painel-composicao.js"></script>
   <script defer src="js/interface/app.js"></script>
 </head>
@@ -190,7 +195,7 @@
               </div>
               <p class="cartao-nota">Também é possível <strong>arrastar</strong> arquivos ou pastas para qualquer ponto da janela e <strong>colar</strong> imagens no editor (Ctrl+V).</p>
               <input type="file" id="entrada-arquivos" multiple hidden data-dica-dispensada
-                     accept=".md,.markdown,.txt,.png,.jpg,.jpeg,.webp,.gif,.svg,.csv,.pdf,.doc,.docx,.odt,.xls,.xlsx">
+                     accept=".md,.markdown,.txt,.json,.png,.jpg,.jpeg,.webp,.gif,.svg,.csv,.pdf,.doc,.docx,.odt,.xls,.xlsx">
               <input type="file" id="entrada-pasta" webkitdirectory multiple hidden data-dica-dispensada>
             </div>
             <div class="cartao" data-cor="composicao">
@@ -388,8 +393,31 @@
               <p class="cartao-nota">Durante a apresentação: <kbd>→</kbd> avança, <kbd>←</kbd> volta, <kbd>O</kbd> visão geral, <kbd>P</kbd> modo apresentador (outra janela, com notas e cronômetro), <kbd>B</kbd> escurece, <kbd>F</kbd> tela cheia, <kbd>Esc</kbd> encerra.</p>
             </div>
             <div class="cartao" data-cor="apresentar">
-              <h3>Exportar</h3>
-              <p class="cartao-nota">HTML autocontido, PDF, projeto .oratoria.json e Markdown chegam na próxima versão.</p>
+              <h3>Apresentação pronta</h3>
+              <p class="cartao-nota">Um único arquivo .html, que abre em qualquer navegador, sem internet e sem instalar nada. Contém os slides, as imagens, as fontes e os gráficos.</p>
+              <div class="grupo-botoes">
+                <button type="button" class="botao botao-primario" id="botao-exportar-html"
+                        data-dica="Gera o arquivo .html da apresentação (nome: título e data). Ele não faz nenhum acesso à internet: imagens da web não aparecem, acrescente-as ao acervo. Setas, O, P, B e F funcionam nele como no editor.">Exportar em HTML</button>
+              </div>
+              <p class="cartao-nota">PDF (direto ou pela impressão): na próxima entrega.</p>
+            </div>
+            <div class="cartao" data-cor="apresentar">
+              <h3>Levar o trabalho</h3>
+              <p class="cartao-nota">Para continuar em outro computador ou navegador, ou guardar uma cópia de segurança.</p>
+              <div class="grupo-botoes">
+                <button type="button" class="botao" id="botao-exportar-projeto"
+                        data-dica="Gera o arquivo .oratoria.json com tudo: texto, acervo (imagens incluídas), ajustes do tema e opções. É a forma recomendada de transportar o trabalho.">Exportar projeto</button>
+                <button type="button" class="botao" id="botao-abrir-projeto"
+                        data-dica="Abre um projeto .oratoria.json. Se houver trabalho em andamento, pede confirmação; o trabalho substituído fica guardado para retomada.">Abrir projeto…</button>
+              </div>
+              <div class="grupo-botoes">
+                <button type="button" class="botao botao-discreto" id="botao-exportar-md"
+                        data-dica="Gera só o texto da apresentação (.md). As imagens continuam citadas pelo nome, mas não vão junto.">Texto (.md)</button>
+                <button type="button" class="botao botao-discreto" id="botao-exportar-zip"
+                        data-dica="Gera um .zip com o texto e todos os arquivos do acervo, numa pasta. Descompactado, pode ser reaberto com Abrir pasta ou editado em outro programa.">Texto e acervo (.zip)</button>
+              </div>
+              <input type="file" id="entrada-projeto" accept=".json,application/json" hidden data-dica-dispensada>
+              <p class="cartao-nota" id="estado-exportacao" aria-live="polite"></p>
             </div>
           </section>
 
@@ -432,6 +460,14 @@
                     data-dica="Substitui o texto atual pelo trabalho guardado neste navegador, com o acervo e os ajustes de tema.">Retomar</button>
             <button type="button" class="botao botao-discreto" id="botao-dispensar-retomada"
                     data-dica="Oculta o convite. O trabalho guardado continua disponível até ser sobrescrito por outro rascunho.">Agora não</button>
+          </div>
+          <div class="aviso-faixa faixa-retomar" id="faixa-abrir-projeto" hidden>
+            <span data-texto></span>
+            <span class="zona-espaco"></span>
+            <button type="button" class="botao botao-primario" id="botao-confirmar-projeto"
+                    data-dica="Substitui o trabalho atual pelo projeto escolhido. O trabalho atual fica guardado neste navegador para retomada.">Abrir</button>
+            <button type="button" class="botao botao-discreto" id="botao-cancelar-projeto"
+                    data-dica="Mantém o trabalho atual; o projeto não é aberto.">Cancelar</button>
           </div>
           <div class="editor-quadro" id="editor-quadro">
             <pre class="editor-realce" id="editor-realce" aria-hidden="true"></pre>

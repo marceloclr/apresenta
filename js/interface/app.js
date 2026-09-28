@@ -3,8 +3,8 @@
 //
 // Responsabilidades: identidade, tema da interface, título do projeto, avisos na tela
 // (O.ui.notificar), confirmação em dois toques (O.ui.doisToques), indicadores da barra
-// superior, guarda automática e convite para retomar o último trabalho (D29), botões de
-// apresentação, condições do ambiente (aba Conferência) e a inicialização dos módulos.
+// superior, guarda automática e convite para retomar o último trabalho (D29), condições do
+// ambiente (aba Conferência) e a inicialização dos módulos.
 
 (function (O) {
   'use strict';
@@ -245,23 +245,6 @@
     dispensar.onclick = () => { faixa.hidden = true; O.ui.editor.focar(); };
   }
 
-  // ── Apresentação ───────────────────────────────────────────────────────
-  async function apresentar(doSlideAtual) {
-    const projeto = E.obter('projeto');
-    if (!(projeto.markdown || '').trim()) { O.ui.notificar('Não há slides para apresentar: escreva ou abra um texto primeiro.', { gravidade: 'aviso' }); return; }
-    const indice = doSlideAtual ? O.ui.previa.secaoDoSlide(O.ui.previa.slideAtual()) : 0;
-    await O.slides.apresentar(projeto, { indice, telaCheia: true });
-  }
-
-  function iniciarApresentacao() {
-    U.$('#botao-apresentar')?.addEventListener('click', () => apresentar(true));
-    U.$('#botao-apresentar-inicio')?.addEventListener('click', () => apresentar(false));
-    U.$('#botao-apresentar-atual')?.addEventListener('click', () => apresentar(true));
-    U.$('#botao-previa-apresentar')?.addEventListener('click', () => apresentar(true));
-    // Ao encerrar, o editor acompanha o slide em que a apresentação parou
-    E.ouvir('apresentacao:encerrada', ({ origem }) => { if (Number.isInteger(origem)) O.ui.previa.irParaSlide(origem); });
-  }
-
   // ── Condições do ambiente (aba Conferência) ────────────────────────────
   const BIBLIOTECAS = [
     ['markdownit', 'markdown-it', 'Interpretação do Markdown'],
@@ -367,8 +350,8 @@
     O.ui.conferencia.iniciar();
     O.ui.guia.iniciar();
     O.ui.composicao.iniciar();
+    O.ui.apresentar.iniciar();
     iniciarIndicadores();
-    iniciarApresentacao();
 
     let ambienteConferido = false;
     E.ouvir('aba:ativada', ({ aba }) => {

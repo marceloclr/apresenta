@@ -30,6 +30,7 @@
 
   const classificar = (f) => {
     const ext = U.extensao(f.name);
+    if (/\.oratoria\.json$/i.test(f.name) || ext === '.json') return 'projeto';
     if (TEXTO.includes(ext)) return 'texto';
     if (IM.ehImagem(f.name) || /^image\//.test(f.type)) return 'imagem';
     if (IM.ehCsv(f.name)) return 'csv';
@@ -43,8 +44,14 @@
    */
   IG.processar = async function (arquivos, { inserirReferencias = false } = {}) {
     const lista = Array.from(arquivos || []).filter((f) => !/^\./.test(f.name)).slice(0, LIMITE_ARQUIVOS);
-    const grupos = { texto: [], imagem: [], csv: [], documento: [], ignorado: [] };
+    const grupos = { projeto: [], texto: [], imagem: [], csv: [], documento: [], ignorado: [] };
     lista.forEach((f) => grupos[classificar(f)].push(f));
+    // Um projeto .oratoria.json substitui tudo: é tratado sozinho, com confirmação (D35)
+    if (grupos.projeto.length) {
+      if (lista.length > 1) O.ui.notificar('Um projeto (.oratoria.json) foi recebido com outros arquivos: só o projeto será aberto.', { gravidade: 'aviso' });
+      O.ui.apresentar.abrirProjeto(grupos.projeto[0]);
+      return { imagens: 0, planilhas: 0, texto: null, substituidos: [], falhas: [], documentos: [], ignorados: [], projeto: grupos.projeto[0].name };
+    }
     const resumo = { imagens: 0, planilhas: 0, texto: null, substituidos: [], falhas: [], documentos: grupos.documento.map((f) => f.name), ignorados: grupos.ignorado.map((f) => f.name) };
     const midia = grupos.imagem.concat(grupos.csv);
     if (!lista.length) return resumo;

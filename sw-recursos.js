@@ -1,7 +1,7 @@
 // ARQUIVO GERADO por tools/gerar-embutiveis.mjs — NÃO EDITAR À MÃO.
 // Origem: index.html
 // Importado por sw.js via importScripts(). A assinatura muda sempre que qualquer recurso muda.
-self.ORATORIA_CACHE = "oratoria-0.1.0-4d472e41bd18";
+self.ORATORIA_CACHE = "oratoria-0.1.0-34a9b6c77c5c";
 self.ORATORIA_RECURSOS = [
   "./",
   "index.html",
@@ -36,6 +36,10 @@ self.ORATORIA_RECURSOS = [
   "js/conteudo/tabelas.js",
   "js/conteudo/graficos.js",
   "js/conteudo/imagens.js",
+  "js/exportacao/zip.js",
+  "js/exportacao/html.js",
+  "js/exportacao/projeto.js",
+  "js/exportacao/markdown.js",
   "js/interface/dicas.js",
   "js/interface/abas.js",
   "js/interface/editor.js",
@@ -47,6 +51,7 @@ self.ORATORIA_RECURSOS = [
   "js/interface/painel-tema.js",
   "js/interface/conferencia.js",
   "js/interface/painel-guia.js",
+  "js/interface/painel-apresentar.js",
   "js/interface/painel-composicao.js",
   "js/interface/app.js",
   "css/fontes.css",

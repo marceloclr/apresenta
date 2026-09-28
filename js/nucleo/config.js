@@ -47,6 +47,9 @@
   c.TIPOS_ACEITOS = ['.md', '.markdown', '.txt', '.png', '.jpg', '.jpeg', '.webp', '.gif', '.svg', '.csv'];
   c.TIPOS_DOCUMENTO = ['.pdf', '.doc', '.docx', '.odt', '.xls', '.xlsx']; // importação na etapa 6-B (§16)
 
+  // ── Projeto .oratoria.json ───────────────────────────────────────────────
+  c.PROJETO_LIMITE_BYTES = 200 * 1024 * 1024; // importação: proteção contra arquivos desmedidos
+
   // ── Exportação em PDF (direta) ───────────────────────────────────────────
   c.PDF_RESOLUCOES = { '1x': 1, '1,5x': 1.5 };
   c.PDF_QUALIDADE = 0.85;

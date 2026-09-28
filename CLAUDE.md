@@ -60,8 +60,8 @@ A aplicação abre por duplo clique no `index.html`, sem servidor e sem build.
 - **D11** markdown-it com `html: true` e todo HTML resultante sanitizado pelo DOMPurify.
 - **D12** Tokens `--i-*` (interface) e `--s-*` (slides).
 - **D13** Na edição portátil, as `@font-face` são geradas a partir do embutível de fontes (sem duplicação).
-- **PDF direto** (além da impressão): rasterização por SVG `foreignObject` → canvas → JPEG, escritor de PDF próprio, camada de texto invisível pesquisável. Disponível no editor **e nas apresentações exportadas** (`motorPdf`, autossuficiente). Safari recua para a impressão.
-- **Biblioteca** (aba própria, cor `#9b8ab8` / `#5e4f7a`): no navegador (IndexedDB), em pasta local (File System Access, com `indice.html` gerado; recuo para downloads no Firefox) e publicação no GitHub num repositório separado (`oratoria-acervo`) via API, com token *fine-grained* guardado só no IndexedDB.
+- **PDF direto** (além da impressão): rasterização por SVG `foreignObject` → canvas → JPEG, escritor de PDF próprio, camada de texto invisível pesquisável. Disponível no editor **e nas apresentações exportadas** (`motorPdf`, autossuficiente).
+- **Biblioteca** (aba própria, cor `#9b8ab8` / `#5e4f7a`): no navegador (IndexedDB), em pasta local (File System Access, com `indice.html` gerado; recuo para downloads no Firefox) e publicação no GitHub num repositório separado (`oratoria-acervo`) via API, com token *fine-grained* guardado só no IndexedDB. A publicação no GitHub fica para a etapa 10 (D34).
 - **Atributos de tabela:** o interpretador aceita `{.classe}` na linha imediatamente seguinte à tabela, inserindo a linha em branco que o markdown-it-attrs exige.
 - **Fontes:** além dos pesos 400/600, incluídos os itálicos 400 de Plex Sans (ênfase) e Plex Serif (citações).
 - **D14** Primeiro slide vazio preservado como slide de título do front-matter.
@@ -84,6 +84,12 @@ A aplicação abre por duplo clique no `index.html`, sem servidor e sem build.
 - **D29** Guarda automática ativa desde a etapa 6. O rascunho encontrado na abertura é copiado para `rascunho/anterior` antes de a nova sessão gravar, e o convite "Retomar" o restaura.
 - **D30** Edições feitas pela interface passam por `document.execCommand('insertText')` para preservar o desfazer do navegador; ações irreversíveis (novo projeto, remover do acervo) usam confirmação em dois toques (`O.ui.doisToques`), sem janelas modais.
 - **D31** Nome da aplicação: **Apresenta** (`APP_NOME`). Identificadores estáveis mantidos: `window.Oratoria`, `APP_SLUG = 'oratoria'`, banco `oratoria`, `.oratoria.json`, arquivos `oratoria-*`.
+- **D33** Exportação do texto em `.md` e em pacote `.zip` (texto + acervo, nomes preservados), com gerador de ZIP próprio (`js/exportacao/zip.js`, método *store*, nomes UTF-8).
+- **D34** Publicação da Biblioteca no GitHub adiada para a etapa 10, com os serviços externos (rede só em `js/servicos/`).
+- **D35** Projeto `.oratoria.json` aberto (botão ou arraste) com confirmação numa faixa quando há trabalho em andamento; o trabalho substituído vai para `rascunho/anterior`. A importação trata o arquivo como não confiável: valida estrutura e tamanhos (`PROJETO_LIMITE_BYTES`), aceita só data URLs de imagem do acervo, sanitiza de novo todo SVG e neutraliza nomes com caminho.
+- **D36** Na impressão e no PDF, gráficos são convertidos em imagem antes da rasterização (canvas não aparece em SVG `foreignObject`).
+- **D37** O indicador de tamanho segue estimado; após cada exportação, o aviso mostra o tamanho real e a estimativa.
+- **D38** Navegadores suportados: Chrome, Edge, Firefox e derivados (Chromium e Gecko). O Safari fica fora do escopo: nenhum recuo ou ajuste específico é mantido para ele.
 - **D32** Cada `<section>` montada leva `data-origem` (índice do slide no texto), preservado nas continuações de tabela: liga miniaturas, pré-visualização e apresentação ao editor.
 
 ## 6. Recursos de terceiros
