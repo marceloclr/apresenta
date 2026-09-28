@@ -359,6 +359,7 @@
 
     O.ui.editor.iniciar();
     O.ui.previa.iniciar();
+    O.ui.miniaturas.iniciar();
     O.ui.ingestao.iniciar();
     O.ui.composicao.iniciar();
     iniciarIndicadores();

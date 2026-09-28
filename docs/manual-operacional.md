@@ -80,7 +80,7 @@ Navegue entre as abas com as setas **↑ ↓** e ative com **Enter**.
 
 **Direita: pré-visualização** do slide em que está o cursor, atualizada enquanto você escreve. As setas **‹ ›** do cabeçalho levam o cursor ao slide anterior ou seguinte; **Apresentar daqui** abre a apresentação a partir dele. Na pré-visualização, os itens revelados aos poucos aparecem todos de uma vez.
 
-**Faixa inferior: sequência de slides** em miniatura *(em preparação)*.
+**Faixa inferior: sequência de slides** em miniatura, com o número de cada slide e o atual destacado. Clique numa miniatura para levar o cursor ao slide. Para **mudar a ordem**, arraste a miniatura para outra posição — ou selecione-a com Tab e use **Alt+←** e **Alt+→**. O texto é reorganizado sozinho, e **Ctrl+Z** no editor desfaz. O slide de título fica sempre no início. Continuações de tabelas longas aparecem com borda tracejada e se movem junto com o slide de origem.
 
 **Botão Apresentar** (barra superior): apresentação em tela cheia a partir do slide do cursor. Ao encerrar com **Esc**, o editor vai ao slide em que você parou.
 

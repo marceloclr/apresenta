@@ -71,6 +71,7 @@
   <script defer src="js/interface/abas.js"></script>
   <script defer src="js/interface/editor.js"></script>
   <script defer src="js/interface/previa.js"></script>
+  <script defer src="js/interface/miniaturas.js"></script>
   <script defer src="js/interface/ingestao.js"></script>
   <script defer src="js/interface/painel-composicao.js"></script>
   <script defer src="js/interface/app.js"></script>
@@ -346,8 +347,14 @@
       </section>
 
       <section class="zona miniaturas" id="zona-miniaturas" aria-labelledby="titulo-miniaturas" data-cor="composicao">
-        <div class="zona-cabecalho"><h2 id="titulo-miniaturas">Sequência de slides</h2></div>
-        <div class="zona-corpo"></div>
+        <div class="zona-cabecalho">
+          <h2 id="titulo-miniaturas">Sequência de slides</h2>
+          <span class="zona-info" id="miniaturas-contador"
+                data-dica="Total de slides da apresentação, incluídas as continuações de tabelas longas (marcadas com uma faixa tracejada). Arraste uma miniatura, ou use Alt+← e Alt+→, para reordenar.">Nenhum slide</span>
+        </div>
+        <div class="zona-corpo miniaturas-corpo">
+          <ol class="miniaturas-lista" id="lista-miniaturas" aria-labelledby="titulo-miniaturas"></ol>
+        </div>
       </section>
     </main>
   </div>
