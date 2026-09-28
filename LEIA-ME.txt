@@ -1,0 +1,66 @@
+APRESENTA — apresentações em HTML a partir de texto
+===================================================
+
+O Apresenta transforma um texto simples (Markdown) numa apresentação de slides.
+O resultado é um único arquivo .html, que abre em qualquer navegador, sem
+internet e sem instalar nada.
+
+
+1. ANTES DE TUDO: EXTRAIA O ZIP
+-------------------------------
+Se você recebeu o arquivo oratoria-pasta.zip, extraia-o primeiro:
+botão direito sobre o zip → "Extrair tudo…" → escolha a pasta → "Extrair".
+
+Abrir o index.html de dentro do zip, sem extrair, NÃO funciona.
+
+
+2. COMO ABRIR
+-------------
+Dê duplo clique em index.html, dentro da pasta "apresenta".
+
+Use Chrome, Edge ou Firefox (ou navegadores derivados deles).
+O Safari não é suportado.
+
+A pasta pode ficar em qualquer lugar: no computador, num pendrive ou numa
+pasta de rede. Para levá-la a outro computador, copie a pasta inteira.
+
+Há também o arquivo único oratoria-portatil.html: um só arquivo, bom para
+mandar por e-mail. Ele não traz os exemplos prontos.
+
+
+3. SEU TRABALHO FICA GUARDADO NESTE NAVEGADOR
+---------------------------------------------
+O Apresenta guarda o texto automaticamente no próprio navegador, ligado ao
+lugar de onde a pasta foi aberta. Se a pasta mudar de lugar, se você trocar
+de navegador ou de computador, o rascunho NÃO vai junto.
+
+Para levar o trabalho com você, vá à aba "Apresentar e exportar" e clique em
+"Exportar projeto": o navegador salva um arquivo .oratoria.json nos downloads.
+No outro computador, use "Abrir projeto…" (ou arraste o arquivo para a janela).
+
+
+4. INTERNET É OPCIONAL
+----------------------
+Tudo o que é essencial funciona sem internet: escrever, ver os slides,
+apresentar e exportar.
+
+Com internet, ficam disponíveis alguns recursos extras: fórmulas matemáticas,
+diagramas e leitura de planilhas .xlsx.
+
+
+5. ONDE APRENDER MAIS
+---------------------
+- Aba "Guia", dentro do próprio Apresenta.
+- Manual operacional: docs/manual-operacional.html (abre no navegador).
+- Versão na internet, que pode ser instalada como aplicativo no Chrome e no
+  Edge: https://marceloclr.github.io/apresenta/
+
+
+6. SE ALGO DER ERRADO
+---------------------
+- Página em branco ou sem cores: o zip não foi extraído. Extraia e abra de novo.
+- Letras diferentes do esperado: falta a pasta assets. Copie a pasta inteira.
+- Rascunho sumiu: a pasta mudou de lugar ou o navegador é outro. Use o
+  projeto .oratoria.json para transportar o trabalho.
+- Na aba "Conferência", o quadro "Condições do ambiente" mostra o que está
+  funcionando neste computador.

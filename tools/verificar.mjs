@@ -10,6 +10,7 @@ import { spawnSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { caminho, relativo, existe, lerTexto, listarArquivos, log, referenciasHtml, ehExterno, formatarBytes } from './lib/comum.mjs';
 import { planejar } from './gerar-embutiveis.mjs';
+import { dimensoesPng } from './icones.mjs';
 
 let acorn, walk;
 try {
@@ -308,7 +309,39 @@ function verificarConvencoes() {
   for (const a of ['CLAUDE.md', 'vendor/VERSOES.md', '.gitignore']) {
     if (existe(caminho(a))) log.ok(`${a} presente`); else erro(`${a} ausente`);
   }
-  for (const a of ['README.md', 'LEIA-ME.txt', 'manifest.webmanifest', 'sw.js']) if (!existe(caminho(a))) log.info(`${a} ainda ausente (previsto em etapa posterior)`);
+  for (const a of ['README.md', 'LEIA-ME.txt', 'manifest.webmanifest', 'sw.js']) {
+    if (existe(caminho(a))) log.ok(`${a} presente`); else erro(`${a} ausente`);
+  }
+}
+
+// ─────────────────────────── 9. Aplicativo instalável ──────────────────────────
+
+function verificarPwa() {
+  log.titulo('9. Aplicativo instalável (manifest, ícones e service worker)');
+  const inicio = erros;
+  const absManifest = caminho('manifest.webmanifest');
+  if (!existe(absManifest)) return log.info('manifest.webmanifest ausente (acusado em 8)');
+  let manifest;
+  try { manifest = JSON.parse(lerTexto(absManifest)); } catch (e) { return erro(`manifest.webmanifest ilegível: ${e.message}`); }
+  for (const campo of ['name', 'short_name', 'start_url', 'display', 'lang', 'icons']) if (!manifest[campo]) erro(`manifest.webmanifest sem "${campo}"`);
+  const icones = manifest.icons || [];
+  for (const icone of icones) {
+    const rel = normalizar(icone.src || '');
+    if (!existe(caminho(rel))) { erro(`ícone citado no manifest inexistente: ${icone.src}`); continue; }
+    if (icone.type === 'image/png') {
+      const dim = dimensoesPng(readFileSync(caminho(rel)));
+      if (!dim || `${dim.largura}x${dim.altura}` !== icone.sizes) erro(`${rel}: ${dim ? `${dim.largura}x${dim.altura}` : 'PNG inválido'} difere de sizes="${icone.sizes}"`);
+    }
+  }
+  const pngs = icones.filter((i) => i.type === 'image/png');
+  if (!pngs.some((i) => i.sizes === '192x192') || !pngs.some((i) => i.sizes === '512x512')) erro('manifest sem ícones PNG 192x192 e 512x512 (exigidos para instalação)');
+  if (!icones.some((i) => /\bmaskable\b/.test(i.purpose || ''))) aviso('manifest sem ícone maskable');
+  if (temIndice && !/<link\b[^>]*rel\s*=\s*["']manifest["']/i.test(htmlIndice)) erro('index.html não cita o manifest (<link rel="manifest">)');
+  // O service worker precisa da lista gerada e só pode ser registrado em https (CLAUDE.md §2.7)
+  if (existe(caminho('sw.js')) && !/importScripts\(\s*['"]sw-recursos\.js['"]\s*\)/.test(lerTexto(caminho('sw.js')))) erro('sw.js não importa sw-recursos.js');
+  const app = existe(caminho('js/interface/app.js')) ? lerTexto(caminho('js/interface/app.js')) : '';
+  if (/serviceWorker\.register/.test(app) && !/location\.protocol === 'https:'/.test(app)) erro('app.js registra o service worker sem restringir a https');
+  concluir(inicio, `manifest com ${icones.length} ícone(s) conferido(s); service worker restrito a https`);
 }
 
 // ─────────────────────────────────── Execução ──────────────────────────────────
@@ -322,6 +355,7 @@ verificarEmbutiveis();
 verificarProibidos();
 verificarAutossuficientes();
 verificarConvencoes();
+verificarPwa();
 
 log.titulo('Resultado');
 if (erros) { log.erro(`${erros} erro(s), ${avisos} aviso(s) — verificação REPROVADA`); process.exit(1); }

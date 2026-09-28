@@ -14,7 +14,7 @@ em `docs/especificacao.md` (cópia do prompt original) e as decisões aprovadas 
 6. **Novo `.js`** exige, na mesma alteração, a linha `<script defer>` no `index.html`, na posição correta (§3), e sua descrição no inventário do manual técnico.
 7. **Manuais sempre atualizados:** toda alteração de comportamento ou estrutura atualiza, na mesma entrega, `docs/manual-tecnico.md` (arquitetura, módulos, APIs, procedimentos) e `docs/manual-operacional.md` (uso, sintaxe, telas). O `verificar.mjs` reprova módulo não descrito no manual técnico.
 
-8. **Situação e próximos passos:** etapas 1 a 7 concluídas. Planos aprovados e ainda não executados ficam em `docs/planos/` — leia-os antes de começar. Próximo: `docs/planos/etapas-8-9.md` (aprovado, executar direto).
+8. **Situação e próximos passos:** etapas 1 a 9 concluídas (8 = PWA e publicação no Pages por GitHub Actions; 9 = edições portáteis e *release*). Planos aprovados e ainda não executados ficam em `docs/planos/` — leia-os antes de começar (`etapas-8-9.md` está executado e fica como registro). Próximos: 6-B (importação de documentos, D18) e 10 (serviços externos e publicação da Biblioteca no GitHub, D34), ambos ainda sem plano aprovado.
 9. **Idioma e fluxo com o autor:** português do Brasil; apresentar plano e aguardar aprovação antes de cada etapa; um commit verificado por passo, com push; relatar ao final de cada etapa.
 
 ## 2. Restrições impostas pelo `file://` (inegociáveis)
@@ -93,6 +93,10 @@ A aplicação abre por duplo clique no `index.html`, sem servidor e sem build.
 - **D36** Na impressão e no PDF, gráficos são convertidos em imagem antes da rasterização (canvas não aparece em SVG `foreignObject`).
 - **D37** O indicador de tamanho segue estimado; após cada exportação, o aviso mostra o tamanho real e a estimativa.
 - **D38** Navegadores suportados: Chrome, Edge, Firefox e derivados (Chromium e Gecko). O Safari fica fora do escopo: nenhum recuo ou ajuste específico é mantido para ele.
+- **D39** Ícones PNG do aplicativo rasterizados pelo navegador instalado (`tools/icones.mjs`, Edge/Chrome headless), sem dependência de imagem; versionados.
+- **D40** O service worker guarda só os arquivos da aplicação (núcleo: cache primeiro; `MODULOS_REDE`: rede primeiro); nada do trabalho do usuário. Registro só em `https:` (testes: `?dev&sw` em localhost).
+- **D41** A edição portátil deriva do mesmo `index.html` por `tools/empacotar.mjs` (`C.EDICAO = 'portatil'`, sem exemplos); nada editado à mão.
+- **D42** *Release* só a partir de tag `v*` criada pelo autor; nunca criar tags ou releases sem pedido.
 - **D32** Cada `<section>` montada leva `data-origem` (índice do slide no texto), preservado nas continuações de tabela: liga miniaturas, pré-visualização e apresentação ao editor.
 
 ## 6. Recursos de terceiros
@@ -107,4 +111,7 @@ Somente bibliotecas gratuitas e de código aberto, com versão fixada em `packag
 | `node tools/vendor.mjs` | Copia bibliotecas e fontes; atualiza `VERSOES.md` |
 | `node tools/gerar-embutiveis.mjs` | Gera `embutiveis/*` e `sw-recursos.js` |
 | `node tools/verificar.mjs` | Valida o repositório (obrigatório ao fim de cada etapa) |
-| `node tools/empacotar.mjs` | Gera `dist/oratoria-pasta.zip` e `dist/oratoria-portatil.html` |
+| `node tools/empacotar.mjs` | Gera `dist/oratoria-pasta.zip`, `dist/oratoria-portatil.html` e `dist/manual-operacional.html` |
+| `node tools/icones.mjs` | Rasteriza `assets/icones/icone.svg` nos PNG do manifest |
+
+Publicação: push na `main` → workflow *Verificar* → *Publicar* (GitHub Pages em modo Actions). *Release*: tag `v*` → `release.yml`.

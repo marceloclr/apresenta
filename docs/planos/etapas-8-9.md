@@ -1,5 +1,7 @@
 # Plano aprovado — Etapas 8 e 9 (PWA, publicação e edições portáteis)
 
+> **Executado em 28/09/2026** (commits `f4600e4`, `1dc3774`, `9cd0c75` e o do passo 4). Mantido como registro.
+>
 > Aprovado em 28/09/2026. Executar numa única rodada, um commit verificado por passo
 > (`node tools/verificar.mjs` + manuais atualizados + push), e relatar ao final.
 > Etapas 1 a 7 concluídas (último commit da etapa 7: `80e198b`).

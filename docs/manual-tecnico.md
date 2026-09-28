@@ -368,7 +368,8 @@ Checagens do `verificar.mjs`:
 | 5 | Embutíveis e `sw-recursos.js` idênticos à recomposição (distingue origem alterada de edição manual) |
 | 6 | Sem `import`/`export`, `fetch(`, `XMLHttpRequest` (exceto `js/servicos/`) ou `type="module"` em strings; nada fora de IIFE no nível superior (análise por acorn, D5) |
 | 7 | Funções autossuficientes sem identificadores externos e dentro da meta de tamanho |
-| 8 | Versão coerente; controles e indicadores do `index.html` com dica; arquivos de convenção presentes; **todo `.js` de `js/` descrito neste manual** (temas apenas informados); manual operacional presente |
+| 8 | Versão coerente; controles e indicadores do `index.html` com dica; arquivos de convenção presentes; **todo `.js` de `js/` descrito neste manual** (temas apenas informados); manual operacional, `README.md`, `LEIA-ME.txt`, `manifest.webmanifest` e `sw.js` presentes |
+| 9 | Manifest legível, com os campos essenciais; ícones citados existentes e com as dimensões declaradas (PNG 192 e 512 obrigatórios; maskable recomendado); `index.html` cita o manifest; `sw.js` importa `sw-recursos.js`; registro do service worker restrito a `https:` |
 
 ## 12. Empacotamento, publicação e *release*
 
@@ -467,5 +468,9 @@ Acréscimos da etapa 7 (exportações), também em `CLAUDE.md` §5:
 **Atualizar uma biblioteca.** `npm install <pacote>@<versão> --save-exact` → `npm run preparar` → testar → registrar a mudança.
 
 **Criar um arquivo `.js`.** Criar como IIFE → acrescentar `<script defer>` na posição correta do `index.html` → descrevê-lo no §3 deste manual → `node tools/gerar-embutiveis.mjs` (atualiza `sw-recursos.js`) → `node tools/verificar.mjs`.
+
+**Publicar uma versão.** Atualizar `version` no `package.json` e `VERSAO` em `config.js` (conferidas juntas) → `node tools/gerar-embutiveis.mjs` → `node tools/verificar.mjs` → commit e push na `main` (o site é publicado pelo workflow). A *release* com as edições portáteis só nasce quando **o autor** cria a tag (`git tag v0.2.0 && git push origin v0.2.0`, D42).
+
+**Mudar o ícone.** Editar `assets/icones/icone.svg` → `node tools/icones.mjs` → `node tools/gerar-embutiveis.mjs` → `node tools/verificar.mjs`.
 
 **Mudar um rótulo da interface.** Alterar o mapa em `rotulos.js`; nunca a chave.
