@@ -361,6 +361,7 @@
     O.ui.previa.iniciar();
     O.ui.miniaturas.iniciar();
     O.ui.ingestao.iniciar();
+    O.ui.acervo.iniciar();
     O.ui.composicao.iniciar();
     iniciarIndicadores();
     iniciarApresentacao();

@@ -73,6 +73,7 @@
   <script defer src="js/interface/previa.js"></script>
   <script defer src="js/interface/miniaturas.js"></script>
   <script defer src="js/interface/ingestao.js"></script>
+  <script defer src="js/interface/acervo.js"></script>
   <script defer src="js/interface/painel-composicao.js"></script>
   <script defer src="js/interface/app.js"></script>
 </head>
@@ -209,9 +210,32 @@
               <p>Imagens e planilhas disponíveis para a apresentação.</p>
             </header>
             <div class="cartao" data-cor="acervo">
-              <h3>Em preparação</h3>
-              <p class="cartao-nota">Miniaturas, compressão, texto alternativo e remoção.</p>
+              <label class="campo">
+                <span class="campo-rotulo">Procurar no acervo</span>
+                <input type="search" class="entrada" id="campo-filtro-acervo" style="--largura: 28ch" autocomplete="off"
+                       placeholder="Parte do nome do arquivo"
+                       data-dica="Mostra só os arquivos cujo nome contém o texto digitado. Não altera o acervo.">
+              </label>
+              <p class="cartao-nota" id="acervo-resumo" aria-live="polite"></p>
+              <div class="grupo-botoes">
+                <button type="button" class="botao" id="botao-acervo-arquivos"
+                        data-dica="Acrescenta imagens (PNG, JPEG, WebP, GIF, SVG) e planilhas CSV ao acervo. As imagens são reduzidas e recomprimidas; nada é enviado pela internet.">Acrescentar arquivos…</button>
+                <button type="button" class="botao" id="botao-acervo-pasta"
+                        data-dica="Acrescenta todas as imagens e planilhas de uma pasta.">Acrescentar pasta…</button>
+              </div>
             </div>
+            <div class="cartao" data-cor="acervo">
+              <h3>Compressão de imagens</h3>
+              <div class="campo">
+                <label class="campo-rotulo" for="campo-qualidade">Qualidade <output id="saida-qualidade" for="campo-qualidade">85%</output></label>
+                <input type="range" id="campo-qualidade" min="50" max="95" step="5" value="85"
+                       data-dica="Qualidade da recompressão das imagens acrescentadas. Mais alta: imagens mais nítidas e arquivo exportado mais pesado; mais baixa: arquivo leve, com perda visível de detalhes em fotos. 80–90% atende à maioria das projeções.">
+              </div>
+              <p class="cartao-nota">Imagens com mais de 1.920 px no lado maior são reduzidas. Vale para as próximas imagens; para as já acrescentadas nesta sessão, use o botão abaixo.</p>
+              <button type="button" class="botao" id="botao-recomprimir"
+                      data-dica="Recomprime, com a qualidade escolhida, as imagens acrescentadas nesta sessão (o original fica guardado só até fechar a página).">Recomprimir</button>
+            </div>
+            <ul class="lista-acervo" id="lista-acervo" aria-label="Arquivos do acervo"></ul>
           </section>
 
           <section class="painel" role="tabpanel" id="painel-tabelas" data-aba="tabelas" hidden>

@@ -119,6 +119,16 @@ Texto corrido do slide.
 
 O primeiro slide pode ficar vazio: o sistema monta a capa com o título, o autor e a data do cabeçalho.
 
+### 4.1 Acervo: imagens e planilhas
+
+Arraste imagens (PNG, JPEG, WebP, GIF, SVG) e planilhas CSV para qualquer ponto da janela, use **Acrescentar arquivos…** na aba **Acervo** ou cole uma imagem no editor com **Ctrl+V**. Tudo é lido no seu computador; nada vai para a internet.
+
+- **Compressão automática.** Fotos com mais de 1.920 px no lado maior são reduzidas e convertidas para um formato mais leve. O cartão de cada arquivo mostra o peso final e quanto foi economizado; passe o mouse sobre o peso para ver o que foi feito. GIFs animados e desenhos SVG são mantidos como estão (o SVG passa por uma limpeza de segurança).
+- **Qualidade.** O controle **Qualidade** equilibra nitidez e peso do arquivo final. Vale para as próximas imagens; **Recomprimir** reaplica às imagens acrescentadas desde que a página foi aberta.
+- **Texto alternativo.** Descreva cada imagem no campo próprio: a descrição é usada ao inserir a imagem pelo botão **Inserir no cursor** e nos fundos de slide.
+- **Citado N× / não citado.** Mostra se o arquivo é usado no texto. Só as imagens citadas entram na apresentação exportada.
+- **Remover** pede um segundo toque para confirmar e não pode ser desfeito.
+
 ## 5. Escrevendo os slides: guia de sintaxe
 
 ### 5.1 Cabeçalho (front-matter)
